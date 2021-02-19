@@ -17,7 +17,7 @@ import com.github.jikoo.planarwrappers.config.impl.MaterialSetting;
 import com.github.jikoo.planarwrappers.config.impl.StringSetting;
 import com.github.jikoo.planarwrappers.config.impl.VectorSetting;
 import com.github.jikoo.planarwrappers.util.StringConverters;
-import com.github.jikoo.planarwrappers.util.function.TriFunction;
+import com.github.jikoo.planarwrappers.function.TriFunction;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;

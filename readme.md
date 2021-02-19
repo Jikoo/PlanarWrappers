@@ -1,4 +1,7 @@
-![Build](https://github.com/Jikoo/PlanarWrappers/workflows/Build/badge.svg) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Jikoo_PlanarWrappers&metric=coverage)](https://sonarcloud.io/dashboard?id=Jikoo_PlanarWrappers)
+# PlanarWrappers
+![Build](https://github.com/Jikoo/PlanarWrappers/workflows/Build/badge.svg)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Jikoo_PlanarWrappers&metric=coverage)](https://sonarcloud.io/dashboard?id=Jikoo_PlanarWrappers)  
+Yet another Bukkit-related library.
 
 ## About
 
@@ -54,6 +57,7 @@ PlanarWrappers is available via [JitPack](https://jitpack.io).
       <groupId>com.github.jikoo</groupId>
       <artifactId>planarwrappers</artifactId>
       <version>$planarVersion</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 ```

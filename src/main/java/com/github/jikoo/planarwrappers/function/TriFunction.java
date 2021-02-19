@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.util.function;
+package com.github.jikoo.planarwrappers.function;
 
 /**
  * An interface accepting three arguments to produce a result.

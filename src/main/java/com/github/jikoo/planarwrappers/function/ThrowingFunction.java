@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.util.function;
+package com.github.jikoo.planarwrappers.function;
 
 /**
  * A function that may throw an exception.
@@ -8,7 +8,7 @@ package com.github.jikoo.planarwrappers.util.function;
  * @param <E> the type of exception that may be thrown
  */
 @FunctionalInterface
-public interface ThrowingFunction<T, R, E extends Exception> {
+public interface ThrowingFunction<T, R, E extends Throwable> {
 
   R apply(T t) throws E;
 }
