@@ -45,6 +45,13 @@ relatively satisfied with.
 I keep rewriting the same functional interfaces. It may take five seconds, but it's five seconds
 each and every time that I could have spent doing anything else.
 
+### Other ~~Garbage~~ Useful Stuff
+
+* Tuples - basic `Pair` and `Triple`
+* Convert coordinates between region, chunk, and block values
+* Weighted random selection
+* Etc.
+
 ## For Developers
 
 ### Maven
