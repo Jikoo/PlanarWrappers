@@ -15,6 +15,9 @@ import be.seeseemelk.mockbukkit.block.BlockMock;
 import com.github.jikoo.planarwrappers.util.Coords;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -51,8 +54,8 @@ class BlockMapTest {
                 Coords.blockToChunk(location.getBlockZ()));
           }
         };
-
     world.setName("world");
+    MockBukkit.getMock().addWorld(world);
 
     this.world = world;
   }
@@ -105,6 +108,25 @@ class BlockMapTest {
         both(everyItem(is(in(values)))).and(containsInAnyOrder(values.toArray())));
 
     assertThat("Block data should not be set after removal", blockMap.get(chunk), empty());
+  }
+
+  @DisplayName("Map entry set should contain expected content.")
+  @Test
+  void testEntries() {
+    Map<Block, Object> normalMap = new HashMap<>();
+    normalMap.put(world.getBlockAt(1, 1, 1), "There once was a man from Nantucket,");
+    normalMap.put(world.getBlockAt(2, 2, 2), "who tripped and fell in a bucket.");
+    normalMap.put(world.getBlockAt(3, 3, 3), "His head hurt so badly");
+    normalMap.put(world.getBlockAt(4, 4, 4), "as he sat there sadly");
+    normalMap.put(world.getBlockAt(5, 5, 5), "he said to the bucket, aw CENSORED");
+
+    normalMap.forEach(blockMap::put);
+    Collection<Entry<Block, Object>> values = blockMap.entrySet();
+
+    assertThat(
+        "Entries must match!",
+        normalMap.entrySet(),
+        both(everyItem(is(in(values)))).and(containsInAnyOrder(values.toArray())));
   }
 
   @AfterAll

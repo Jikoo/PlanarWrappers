@@ -7,8 +7,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -199,4 +202,62 @@ public class BlockMap<V> {
 
     return values;
   }
+
+  /**
+   * Gets a collection of entries.
+   *
+   * <p>N.B. This ignores any entries that do not currently have a loaded world!
+   *
+   * @return a collection of entries
+   */
+  public @NotNull Collection<Map.Entry<Block, V>> entrySet() {
+    List<Map.Entry<Block, V>> entries = new ArrayList<>();
+
+    this.serverMap.forEach(
+        (worldName, worldMap) -> {
+          World world = Bukkit.getWorld(worldName);
+          if (world == null) {
+            return;
+          }
+
+          worldMap.forEach(
+              (x, xMap) ->
+                  xMap.forEach(
+                      (z, zMap) ->
+                          zMap.forEach(
+                              (y, value) -> {
+                                  Block key = world.getBlockAt(x, y, z);
+                                  entries.add(
+                                      new Map.Entry<Block, V>() {
+                                        @Override
+                                        public Block getKey() {
+                                          return key;
+                                        }
+
+                                        @Override
+                                        public V getValue() {
+                                          return value;
+                                        }
+
+                                        @Override
+                                        public V setValue(Object value) {
+                                          throw new UnsupportedOperationException(
+                                              "Modification of mappings not allowed here!");
+                                        }
+
+                                        @Override
+                                        public boolean equals(Object obj) {
+                                          if (!(obj instanceof Map.Entry)) {
+                                            return false;
+                                          }
+                                          Entry<?, ?> other = (Entry<?, ?>) obj;
+                                          return key.equals(other.getKey()) && value.equals(other.getValue());
+                                        }
+                                      });
+                              })));
+        });
+
+    return entries;
+  }
+
 }
