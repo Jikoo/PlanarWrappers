@@ -54,12 +54,36 @@ each and every time that I could have spent doing anything else.
 
 ## For Developers
 
+Please relocate PlanarWrappers when including its files in your project! Bundled library conflicts
+are not fun, make your life easier.
+
+### License [![WTFPL](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-2.png)](http://www.wtfpl.net/)
+
+This project is licensed under the WTFPL. You can do whatever you want with the content.
+If you do use it and decide to credit me, thanks! I think you're just swell.
+
+### People Who Hate Version Control
+
+Everyone loves options. We may not see eye to eye, but you're free to do what you like.
+1) Just copy the files you want into your project. I can't make you, but I ask that you please
+   change the package name to prevent conflicts.
+2) Use a compiled as a manually maintained dependency. I'm way too lazy to even set up appveyor for
+   this project (that takes like four clicks, I'd rather spend my time having fun by writing five
+   paragraphs), so you can abuse JitPack and download builds directly like it was a regular CI, you
+   monster. Also, since you're not using version control you probably aren't relocating the files,
+   which is a whole new can of worms. Have fun!
+
+### Version Control
+
+PlanarWrappers is available via [JitPack](https://jitpack.io). I pretty much only use Maven in my
+projects, so that's the only full writeup you get, but JitPack supports Gradle, Maven, SBT, and
+Leiningen.
+
 ### Maven
 
-PlanarWrappers is available via [JitPack](https://jitpack.io). Replace `$planarVersion` with the
-version you desire to work with. Please relocate PlanarWrappers when shading it into your file!
-Bundled library conflicts are not fun, make your life easier. The `minimizeJar` option is
+Replace `$planarVersion` with the version you desire to work with. The `minimizeJar` option is
 recommended to prevent inflating your plugin with unnecessary classes.  
+
 Sample configuration:
 
 ```xml
