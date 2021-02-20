@@ -7,8 +7,6 @@ import org.jetbrains.annotations.Range;
 
 /**
  * A utility for selecting a weighted choice randomly.
- *
- * @author Jikoo
  */
 public final class WeightedRandom {
 

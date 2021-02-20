@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.SortedMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -252,6 +253,11 @@ public class BlockMap<V> {
                                           }
                                           Entry<?, ?> other = (Entry<?, ?>) obj;
                                           return key.equals(other.getKey()) && value.equals(other.getValue());
+                                        }
+
+                                        @Override
+                                        public int hashCode() {
+                                          return Objects.hash(key, value);
                                         }
                                       });
                               })));

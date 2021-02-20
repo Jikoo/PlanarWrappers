@@ -6,8 +6,6 @@ import java.util.regex.Pattern;
 
 /**
  * A small class for converting coordinates between block, chunks, and regions.
- *
- * @author Jikoo
  */
 public final class Coords {
 
