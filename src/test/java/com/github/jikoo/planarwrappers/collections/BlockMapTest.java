@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.container;
+package com.github.jikoo.planarwrappers.collections;
 
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.everyItem;

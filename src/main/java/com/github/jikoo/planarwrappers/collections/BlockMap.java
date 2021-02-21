@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.container;
+package com.github.jikoo.planarwrappers.collections;
 
 import com.github.jikoo.planarwrappers.util.Coords;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.container;
+package com.github.jikoo.planarwrappers.collections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
