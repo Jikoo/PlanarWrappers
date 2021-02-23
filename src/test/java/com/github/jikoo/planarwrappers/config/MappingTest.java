@@ -11,9 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@DisplayName("Feature: Parse and handle overridable mappings")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MappingTest {
 
   private static final String NULL_KEY = "null";

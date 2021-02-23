@@ -10,8 +10,8 @@ import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A utility for managing {@link Consumer}-based {@link Listener Listeners} for
- * {@link Event Events}.
+ * A utility for managing {@link Consumer}-based {@link Listener Listeners} for {@link Event
+ * Events}.
  */
 public class Event {
 
@@ -162,8 +162,7 @@ public class Event {
    * @param <T> the type of Event
    */
   public static <T extends org.bukkit.event.Event> void unregister(
-      @NotNull Class<T> eventClass,
-      @NotNull String key) {
+      @NotNull Class<T> eventClass, @NotNull String key) {
     HandlerList handlerList = getHandlerList(eventClass);
 
     for (RegisteredListener registeredListener : handlerList.getRegisteredListeners()) {
@@ -178,6 +177,7 @@ public class Event {
 
   /**
    * Get the HandlerList for an Event.
+   *
    * @param clazz the type of Event
    * @param <T> the type of Event
    * @return the HandlerList
@@ -192,8 +192,7 @@ public class Event {
     } catch (Exception e) {
       // Re-throw exception - should only happen if event is missing required method.
       throw new IllegalArgumentException(
-          "Event " + clazz.getName() + " does not declare a static getHandlerList method!",
-          e);
+          "Event " + clazz.getName() + " does not declare a static getHandlerList method!", e);
     }
   }
 }

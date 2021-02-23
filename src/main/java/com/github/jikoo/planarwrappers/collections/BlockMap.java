@@ -226,44 +226,51 @@ public class BlockMap<V> {
                   xMap.forEach(
                       (z, zMap) ->
                           zMap.forEach(
-                              (y, value) -> {
-                                  Block key = world.getBlockAt(x, y, z);
+                              (y, value) ->
                                   entries.add(
-                                      new Map.Entry<Block, V>() {
-                                        @Override
-                                        public Block getKey() {
-                                          return key;
-                                        }
-
-                                        @Override
-                                        public V getValue() {
-                                          return value;
-                                        }
-
-                                        @Override
-                                        public V setValue(Object value) {
-                                          throw new UnsupportedOperationException(
-                                              "Modification of mappings not allowed here!");
-                                        }
-
-                                        @Override
-                                        public boolean equals(Object obj) {
-                                          if (!(obj instanceof Map.Entry)) {
-                                            return false;
-                                          }
-                                          Entry<?, ?> other = (Entry<?, ?>) obj;
-                                          return key.equals(other.getKey()) && value.equals(other.getValue());
-                                        }
-
-                                        @Override
-                                        public int hashCode() {
-                                          return Objects.hash(key, value);
-                                        }
-                                      });
-                              })));
+                                      new BlockMapEntry<>(world.getBlockAt(x, y, z), value)))));
         });
 
     return entries;
   }
 
+  static class BlockMapEntry<V> implements Entry<Block, V> {
+
+    private final Block key;
+    private final V value;
+
+    BlockMapEntry(Block key, V value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    @Override
+    public Block getKey() {
+      return key;
+    }
+
+    @Override
+    public V getValue() {
+      return value;
+    }
+
+    @Override
+    public V setValue(V value) {
+      throw new UnsupportedOperationException("Modification of mappings not allowed here!");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (!(obj instanceof Map.Entry)) {
+        return false;
+      }
+      Entry<?, ?> other = (Entry<?, ?>) obj;
+      return key.equals(other.getKey()) && value.equals(other.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(key, value);
+    }
+  }
 }

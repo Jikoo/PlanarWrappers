@@ -75,10 +75,7 @@ class EventTest {
 
     MockBukkit.getMock().getPluginManager().callEvent(new ServerLoadEvent(LoadType.RELOAD));
 
-    assertThat(
-        "First consumer must not be overridden",
-        value.get(),
-        is(0));
+    assertThat("First consumer must not be overridden", value.get(), is(0));
 
     Event.unregister(clazz, key);
 

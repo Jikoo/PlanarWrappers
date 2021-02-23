@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
  * A listener containing a key.
  *
  * <p>This class is visible purely so plugins can decide what to do with specific listeners. It is
- * not supposed to be instantiated by any means other than registration via the
- * {@link com.github.jikoo.planarwrappers.event.Event Event} utility.
+ * not supposed to be instantiated by any means other than registration via the {@link
+ * com.github.jikoo.planarwrappers.event.Event Event} utility.
  *
  * @param <T> the type of event being listened to
  */

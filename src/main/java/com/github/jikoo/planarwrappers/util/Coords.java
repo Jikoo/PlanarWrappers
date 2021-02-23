@@ -4,9 +4,7 @@ import com.github.jikoo.planarwrappers.tuple.Pair;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * A small class for converting coordinates between block, chunks, and regions.
- */
+/** A small class for converting coordinates between block, chunks, and regions. */
 public final class Coords {
 
   private static final Pattern REGION_FILE = Pattern.compile("r\\.(-?\\d+)\\.(-?\\d+)\\.mca");

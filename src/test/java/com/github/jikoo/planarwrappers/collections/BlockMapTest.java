@@ -8,10 +8,12 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.block.BlockMock;
+import com.github.jikoo.planarwrappers.collections.BlockMap.BlockMapEntry;
 import com.github.jikoo.planarwrappers.util.Coords;
 import java.util.Arrays;
 import java.util.Collection;
@@ -127,6 +129,26 @@ class BlockMapTest {
         "Entries must match!",
         normalMap.entrySet(),
         both(everyItem(is(in(values)))).and(containsInAnyOrder(values.toArray())));
+  }
+
+  @DisplayName("Map entry is an immutable data container")
+  @Test
+  void testEntry() {
+    Block key = world.getBlockAt(0, 0, 0);
+    String value = "excellent value";
+    BlockMapEntry<String> entry = new BlockMapEntry<>(key, value);
+    BlockMapEntry<String> entry1 = new BlockMapEntry<>(key, value);
+    assertThat("Entries must match if contents match", entry, is(entry1));
+    assertThat("Hashcode must be calculated consistently", entry.hashCode(), is(entry1.hashCode()));
+    assertThat("Entry must return expected key", entry.getKey(), is(key));
+    assertThat("Entry must return expected value", entry.getValue(), is(value));
+    //noinspection EqualsBetweenInconvertibleTypes
+    assertThat("Non-entry is not equal", !entry.equals(key));
+    entry1 = new BlockMapEntry<>(world.getBlockAt(1, 1, 1), value);
+    assertThat("Different key is not equal", !entry.equals(entry1));
+    entry1 = new BlockMapEntry<>(key, "different value");
+    assertThat("Different value is not equal", !entry.equals(entry1));
+    assertThrows(UnsupportedOperationException.class, () -> entry.setValue("new value"));
   }
 
   @AfterAll

@@ -5,9 +5,7 @@ import java.util.Random;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
-/**
- * A utility for selecting a weighted choice randomly.
- */
+/** A utility for selecting a weighted choice randomly. */
 public final class WeightedRandom {
 
   private WeightedRandom() {}
