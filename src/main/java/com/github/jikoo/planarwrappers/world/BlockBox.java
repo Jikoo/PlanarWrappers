@@ -165,8 +165,9 @@ public class BlockBox implements Cloneable {
    * @return the bounding box
    */
   public static @NotNull BlockBox ofBlocks(@NotNull Collection<Block> blocks) {
-    if (blocks.size() == 0)
+    if (blocks.isEmpty()) {
       throw new IllegalArgumentException("Cannot create bounding box with no blocks!");
+    }
 
     Iterator<Block> iterator = blocks.iterator();
     // Initialize bounding box with first block
@@ -599,26 +600,26 @@ public class BlockBox implements Cloneable {
    * @return true if the specified positions are inside the bounding box
    */
   public boolean contains2d(int x1, int z1, int x2, int z2) {
-    int minX;
-    int maxX;
+    int localMinX;
+    int localMaxX;
     if (x1 < x2) {
-      minX = x1;
-      maxX = x2;
+      localMinX = x1;
+      localMaxX = x2;
     } else {
-      minX = x2;
-      maxX = x1;
+      localMinX = x2;
+      localMaxX = x1;
     }
-    int minZ;
-    int maxZ;
+    int localMinZ;
+    int localMaxZ;
     if (z1 < z2) {
-      minZ = z1;
-      maxZ = z2;
+      localMinZ = z1;
+      localMaxZ = z2;
     } else {
-      minZ = z2;
-      maxZ = z1;
+      localMinZ = z2;
+      localMaxZ = z1;
     }
 
-    return contains2dInternal(minX, minZ, maxX, maxZ);
+    return contains2dInternal(localMinX, localMinZ, localMaxX, localMaxZ);
   }
 
   /**
@@ -795,7 +796,7 @@ public class BlockBox implements Cloneable {
     try {
       return (BlockBox) super.clone();
     } catch (CloneNotSupportedException e) {
-      throw new Error(e);
+      throw new RuntimeException("This exception should never occur. If you see it, congrats!", e);
     }
   }
 }
