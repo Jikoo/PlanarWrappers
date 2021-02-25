@@ -35,7 +35,7 @@ import org.junit.jupiter.api.TestInstance;
 
 @DisplayName("Feature: Map multiple objects to blocks")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BlockMultimapTest {
+class BlockMultimapTest {
 
   World world;
   BlockMultimap<Object> blockMultimap;
