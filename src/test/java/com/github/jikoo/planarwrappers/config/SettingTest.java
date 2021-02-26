@@ -106,7 +106,7 @@ class SettingTest {
   }
 
   private static <T> Arguments makeSetting(
-      TriFunction<Setting<T>, ConfigurationSection, String, T> constructor,
+      TriFunction<ConfigurationSection, String, T, Setting<T>> constructor,
       String path,
       T internalDefault,
       T setDefault,
