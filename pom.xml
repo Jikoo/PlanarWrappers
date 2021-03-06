@@ -13,6 +13,7 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <artifactId>annotations</artifactId>
@@ -43,7 +44,7 @@
       <artifactId>MockBukkit-v1.16</artifactId>
       <groupId>com.github.seeseemelk</groupId>
       <scope>test</scope>
-      <version>0.24.0</version>
+      <version>0.31.0</version>
     </dependency>
   </dependencies>
   <groupId>com.github.jikoo</groupId>
@@ -112,6 +113,6 @@
     </repository>
   </repositories>
 
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.0</version>
 
 </project>
