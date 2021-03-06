@@ -6,6 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -145,5 +147,36 @@ public enum Direction {
    */
   public Direction getRelativeDirection(Direction direction) {
     return values()[(this.ordinal() + direction.ordinal()) % 4];
+  }
+
+  /**
+   * Get a Vector translated from the internal representation.
+   *
+   * @param vector the Vector to translate
+   * @return the new Vector
+   */
+  public Vector getRelativeVector(@NotNull Vector vector) {
+    vector = vector.clone();
+    switch (this) {
+      case EAST:
+        double newZ = vector.getX();
+        vector.setX(vector.getZ());
+        vector.setZ(newZ);
+        return vector;
+      case SOUTH:
+        vector.setX(-2 * vector.getBlockX() + vector.getX());
+        int blockZ = (int) vector.getZ();
+        vector.setZ(blockZ + vector.getZ() - blockZ);
+        return vector;
+      case WEST:
+        double newZ1 = -2 * vector.getBlockX() + vector.getX();
+        vector.setX(-2 * vector.getBlockZ() + vector.getZ());
+        vector.setZ(newZ1);
+        return vector;
+      case NORTH:
+      default:
+        vector.setZ(-2 * vector.getBlockZ() + vector.getZ());
+        return vector;
+    }
   }
 }

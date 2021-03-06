@@ -76,7 +76,7 @@ public class Shape {
   public Map<Block, BlockData> getBuildLocations(@NotNull Block key, @NotNull Direction direction) {
     Map<Block, BlockData> newLocs = new HashMap<>();
     for (Entry<Vector, TransformableBlockData> entry : vectorData.entrySet()) {
-      Vector relativeVector = getRelativeVector(direction, entry.getKey());
+      Vector relativeVector = direction.getRelativeVector(entry.getKey());
       newLocs.put(
           key.getRelative(
               relativeVector.getBlockX(), relativeVector.getBlockY(), relativeVector.getBlockZ()),
@@ -96,38 +96,6 @@ public class Shape {
     for (Entry<Block, BlockData> entry :
         this.getBuildLocations(key, direction).entrySet()) {
       entry.getKey().setBlockData(entry.getValue());
-    }
-  }
-
-  /**
-   * Get a Vector translated from the internal representation.
-   *
-   * @param direction the Direction
-   * @param vector the Vector to translate
-   * @return the new Vector
-   */
-  private static Vector getRelativeVector(@NotNull Direction direction, @NotNull Vector vector) {
-    vector = vector.clone();
-    switch (direction) {
-      case EAST:
-        double newZ = vector.getX();
-        vector.setX(vector.getZ());
-        vector.setZ(newZ);
-        return vector;
-      case SOUTH:
-        vector.setX(-2 * vector.getBlockX() + vector.getX());
-        int blockZ = (int) vector.getZ();
-        vector.setZ(blockZ + vector.getZ() - blockZ);
-        return vector;
-      case WEST:
-        double newZ1 = -2 * vector.getBlockX() + vector.getX();
-        vector.setX(-2 * vector.getBlockZ() + vector.getZ());
-        vector.setZ(newZ1);
-        return vector;
-      case NORTH:
-      default:
-        vector.setZ(-2 * vector.getBlockZ() + vector.getZ());
-        return vector;
     }
   }
 }
