@@ -15,11 +15,11 @@ public final class Generics {
 
   private Generics() {}
 
-  public @NotNull static <T> T orDefault(@Nullable T t, @NotNull T defaultT) {
+  public static <T> @NotNull T orDefault(@Nullable T t, @NotNull T defaultT) {
     return t == null ? defaultT : t;
   }
 
-  public @Nullable static <T, R> R functionAs(
+  public static <T, R> @Nullable R functionAs(
       @NotNull Class<T> clazz, @Nullable Object obj, @NotNull Function<T, R> function) {
     if (!clazz.isInstance(obj)) {
       return null;

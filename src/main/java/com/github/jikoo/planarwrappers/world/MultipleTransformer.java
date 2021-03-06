@@ -16,7 +16,7 @@ public abstract class MultipleTransformer<T extends BlockData> implements BlockD
   private final Class<T> clazz;
   private final Set<Direction> faces;
 
-  public MultipleTransformer(@NotNull Class<T> clazz, @NotNull Set<Direction> faces) {
+  protected MultipleTransformer(@NotNull Class<T> clazz, @NotNull Set<Direction> faces) {
     this.clazz = clazz;
     this.faces = EnumSet.copyOf(faces);
   }

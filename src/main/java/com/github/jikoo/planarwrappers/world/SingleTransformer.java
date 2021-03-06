@@ -14,7 +14,7 @@ public abstract class SingleTransformer<T extends BlockData> implements BlockDat
   private final Class<T> clazz;
   private final Direction direction;
 
-  public SingleTransformer(@NotNull Class<T> clazz, @NotNull Direction direction) {
+  protected SingleTransformer(@NotNull Class<T> clazz, @NotNull Direction direction) {
     this.clazz = clazz;
     this.direction = direction;
   }

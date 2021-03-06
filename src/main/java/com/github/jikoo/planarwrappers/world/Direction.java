@@ -72,11 +72,11 @@ public enum Direction {
         return SOUTH;
       case 1:
         return WEST;
+      case 3:
+        return EAST;
       case 2:
       default:
         return NORTH;
-      case 3:
-        return EAST;
     }
   }
 
@@ -104,15 +104,15 @@ public enum Direction {
    */
   public BlockFace toBlockFace() {
     switch (this) {
-      case NORTH:
-      default:
-        return BlockFace.NORTH;
       case EAST:
         return BlockFace.EAST;
       case SOUTH:
         return BlockFace.SOUTH;
       case WEST:
         return BlockFace.WEST;
+      case NORTH:
+      default:
+        return BlockFace.NORTH;
     }
   }
 
@@ -123,13 +123,13 @@ public enum Direction {
    */
   public Axis toAxis() {
     switch (this) {
+      case EAST:
+      case WEST:
+        return Axis.X;
       case NORTH:
       case SOUTH:
       default:
         return Axis.Z;
-      case EAST:
-      case WEST:
-        return Axis.X;
     }
   }
 
