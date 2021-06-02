@@ -44,7 +44,7 @@
       <artifactId>MockBukkit-v1.16</artifactId>
       <groupId>com.github.seeseemelk</groupId>
       <scope>test</scope>
-      <version>0.31.0</version>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
   <groupId>com.github.jikoo</groupId>
