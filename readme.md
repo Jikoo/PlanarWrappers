@@ -62,17 +62,6 @@ are not fun, make your life easier.
 This project is licensed under the WTFPL. You can do whatever you want with the content.
 If you do use it and decide to credit me, thanks! I think you're just swell.
 
-### People Who Hate Version Control
-
-Everyone loves options. We may not see eye to eye, but you're free to do what you like.
-1) Just copy the files you want into your project. I can't make you, but I ask that you please
-   change the package name to prevent conflicts.
-2) Use a compiled as a manually maintained dependency. I'm way too lazy to even set up appveyor for
-   this project (that takes like four clicks, I'd rather spend my time having fun by writing five
-   paragraphs), so you can abuse JitPack and download builds directly like it was a regular CI, you
-   monster. Also, since you're not using version control you probably aren't relocating the files,
-   which is a whole new can of worms. Have fun!
-
 ### Version Control
 
 PlanarWrappers is available via [JitPack](https://jitpack.io). I pretty much only use Maven in my
@@ -132,3 +121,18 @@ Sample configuration:
   </build>
 </project>
 ```
+
+### Other Version Control Software
+
+Use JitPack to get builds with whatever software you like. I'm way too lazy to include an example.
+
+### People Who Hate Version Control
+
+Everyone loves options. We may not see eye to eye, but you're free to do what you like.
+1) Just copy the files you want into your project. I can't make you, but I ask that you please
+   change the package name to prevent conflicts.
+2) Use a compiled copy as a manually maintained dependency. I'm way too lazy to even set up appveyor
+   for this project (that takes like four clicks, I'd rather spend my time having fun by writing
+   five paragraphs), so you can abuse JitPack and download builds directly like it was a regular CI,
+   you monster. Also, since you're not using version control you probably aren't relocating the
+   files, which is a whole new can of worms. Have fun!

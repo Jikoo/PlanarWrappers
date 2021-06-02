@@ -48,7 +48,7 @@ public final class Experience {
     int level = getIntLevelFromExp(exp);
 
     // Get remaining exp progressing towards next level. Cast to float for next bit of math.
-    float remainder = exp - getExpFromLevel(level);
+    float remainder = exp - (float) getExpFromLevel(level);
 
     // Get level progress with float precision.
     float progress = remainder / getExpToNext(level);
@@ -66,13 +66,13 @@ public final class Experience {
    */
   public static int getIntLevelFromExp(long exp) {
     if (exp > 1395) {
-      return (int) ((Math.sqrt(72 * exp - 54215) + 325) / 18);
+      return (int) ((Math.sqrt(72 * exp - 54215D) + 325) / 18);
     }
     if (exp > 315) {
-      return (int) (Math.sqrt(40 * exp - 7839) / 10 + 8.1);
+      return (int) (Math.sqrt(40 * exp - 7839D) / 10 + 8.1);
     }
     if (exp > 0) {
-      return (int) (Math.sqrt(exp + 9) - 3);
+      return (int) (Math.sqrt(exp + 9D) - 3);
     }
     return 0;
   }
