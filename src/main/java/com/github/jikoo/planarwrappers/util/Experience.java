@@ -54,7 +54,7 @@ public final class Experience {
     float progress = remainder / getExpToNext(level);
 
     // Slap both numbers together and call it a day. While it shouldn't be possible for progress
-    // to be an invalid value (value < 0 || 1 <= value)
+    // to be an invalid value (value < 0 || 1 <= value), this prevents the need for extra handling.
     return ((double) level) + progress;
   }
 

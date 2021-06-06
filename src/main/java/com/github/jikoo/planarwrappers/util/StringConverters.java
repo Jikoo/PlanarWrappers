@@ -23,16 +23,13 @@ public final class StringConverters {
   private StringConverters() {}
 
   /**
-   * Convert a String into a {@link Keyed} object.
+   * Convert a String into a NamespacedKey.
    *
-   * @param function the method for getting a Keyed object from a NamespacedKey
-   * @param key the raw String value
-   * @param <T> the type of Keyed
-   * @return the value associated with the key
+   * @param key the namespaced key string
+   * @return the parsed NamespacedKey or null if invalid
    */
-  @Contract("_, null -> null")
-  public static <T extends Keyed> @Nullable T toKeyed(
-      @NotNull Function<NamespacedKey, T> function, @Nullable String key) {
+  @Contract("null -> null")
+  public static @Nullable NamespacedKey toNamespacedKey(@Nullable String key) {
     if (key == null) {
       return null;
     }
@@ -51,6 +48,26 @@ public final class StringConverters {
       // No alternative to deprecated API.
       //noinspection deprecation
       namespacedKey = new NamespacedKey(split[0], split[1]);
+    }
+
+    return namespacedKey;
+  }
+
+  /**
+   * Convert a String into a {@link Keyed} object.
+   *
+   * @param function the method for getting a Keyed object from a NamespacedKey
+   * @param key the raw String value
+   * @param <T> the type of Keyed
+   * @return the value associated with the key
+   */
+  @Contract("_, null -> null")
+  public static <T extends Keyed> @Nullable T toKeyed(
+      @NotNull Function<NamespacedKey, T> function, @Nullable String key) {
+    NamespacedKey namespacedKey = toNamespacedKey(key);
+
+    if (namespacedKey == null) {
+      return null;
     }
 
     return function.apply(namespacedKey);
