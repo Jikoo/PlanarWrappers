@@ -43,6 +43,12 @@
     <dependency>
       <artifactId>MockBukkit-v1.16</artifactId>
       <groupId>com.github.seeseemelk</groupId>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-library</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
       <version>1.1.0</version>
     </dependency>
