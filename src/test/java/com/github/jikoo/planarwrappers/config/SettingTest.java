@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import be.seeseemelk.mockbukkit.MockBukkit;
 import com.github.jikoo.planarwrappers.config.impl.BooleanSetting;
 import com.github.jikoo.planarwrappers.config.impl.ColorSetting;
 import com.github.jikoo.planarwrappers.config.impl.DoubleSetting;
@@ -13,6 +14,7 @@ import com.github.jikoo.planarwrappers.config.impl.IntSetting;
 import com.github.jikoo.planarwrappers.config.impl.ItemSetting;
 import com.github.jikoo.planarwrappers.config.impl.LocationSetting;
 import com.github.jikoo.planarwrappers.config.impl.LongSetting;
+import com.github.jikoo.planarwrappers.config.impl.MaterialSetSetting;
 import com.github.jikoo.planarwrappers.config.impl.MaterialSetting;
 import com.github.jikoo.planarwrappers.config.impl.StringSetting;
 import com.github.jikoo.planarwrappers.config.impl.VectorSetting;
@@ -42,6 +44,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,8 +57,35 @@ import org.junit.jupiter.params.provider.ValueSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SettingTest {
 
+  @BeforeAll
+  void beforeAll() {
+    MockBukkit.mock();
+  }
+
   private static final String INVALID_OVERRIDE = "%invalid%";
   private static final String OVERRIDE_VALUE = "world";
+
+  @DisplayName("Settings should be retrievable as expected")
+  @ParameterizedTest
+  @MethodSource("getSettings")
+  void testSetting(Setting<?> setting, Object internalDefault, Object setDefault, Object override) {
+    assertThat("Override must be used", setting.get(OVERRIDE_VALUE), is(override));
+    // Repeat run to hit cache on parsed settings.
+    assertThat("Override must be used", setting.get(OVERRIDE_VALUE), is(override));
+    assertThat(
+        "Override must fall through if invalid/absent",
+        setting.get(INVALID_OVERRIDE),
+        is(setDefault));
+    // Clear values for default fallthrough.
+    setting.section.set(setting.path, null);
+    if (setting instanceof ParsedSetting) {
+      ((ParsedSetting<?>) setting).cache.clear();
+    }
+    assertThat(
+        "Default must fall through if invalid/absent",
+        setting.get(INVALID_OVERRIDE),
+        is(internalDefault));
+  }
 
   static Stream<Arguments> getSettings() {
     return Arrays.stream(
@@ -124,15 +155,11 @@ class SettingTest {
     YamlConfiguration configuration =
         getConfiguration(
             path,
-            setDefault.stream().map(Material::name).collect(Collectors.toList()),
+            Stream.concat(setDefault.stream().map(Material::name), Stream.of("#wall_signs", "#3"))
+                .collect(Collectors.toList()),
             override.stream().map(Material::name).collect(Collectors.toList()));
     SimpleSetSetting<Material> setting =
-        new SimpleSetSetting<Material>(configuration, path, internalDefault) {
-          @Override
-          protected @Nullable Material convertValue(@NotNull String value) {
-            return StringConverters.toMaterial(value);
-          }
-        };
+        new MaterialSetSetting(configuration, path, internalDefault);
 
     return Arguments.of(
         setting, internalDefault, new HashSet<>(setDefault), new HashSet<>(override));
@@ -212,28 +239,6 @@ class SettingTest {
     }
   }
 
-  @DisplayName("Settings should be retrievable as expected")
-  @ParameterizedTest
-  @MethodSource("getSettings")
-  void testSetting(Setting<?> setting, Object internalDefault, Object setDefault, Object override) {
-    assertThat("Override must be used", setting.get(OVERRIDE_VALUE), is(override));
-    // Repeat run to hit cache on parsed settings.
-    assertThat("Override must be used", setting.get(OVERRIDE_VALUE), is(override));
-    assertThat(
-        "Override must fall through if invalid/absent",
-        setting.get(INVALID_OVERRIDE),
-        is(setDefault));
-    // Clear values for default fallthrough.
-    setting.section.set(setting.path, null);
-    if (setting instanceof ParsedSetting) {
-      ((ParsedSetting<?>) setting).cache.clear();
-    }
-    assertThat(
-        "Default must fall through if invalid/absent",
-        setting.get(INVALID_OVERRIDE),
-        is(internalDefault));
-  }
-
   @DisplayName("Multimap settings should ignore invalid invalid configurations gracefully")
   @ParameterizedTest
   @MethodSource("getInvalidMultimapConfigs")
@@ -273,5 +278,10 @@ class SettingTest {
 
     assertThrows(
         IllegalArgumentException.class, () -> new EnumSetting<>(config, key, Material.AIR));
+  }
+
+  @AfterAll
+  void afterAll() {
+    MockBukkit.unmock();
   }
 }
