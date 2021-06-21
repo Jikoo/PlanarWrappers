@@ -10,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/** A setting representing a {@link Set} of {@link Material Materials}. */
 public class MaterialSetSetting extends KeyedSetSetting<Material> {
 
   public MaterialSetSetting(

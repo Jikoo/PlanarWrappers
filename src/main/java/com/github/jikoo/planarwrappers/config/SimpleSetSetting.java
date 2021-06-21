@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A parsed setting representing a Set of a simple objects.
+ * A parsed setting representing a {@link Set} of a simple objects.
  *
  * <p>The "set" configuration-side is a list of strings.
  *
- * @param <T> the type of object in the set
+ * @param <T> the type of object in the {@code Set}
  */
 public abstract class SimpleSetSetting<T> extends ParsedSetting<Set<T>> {
 

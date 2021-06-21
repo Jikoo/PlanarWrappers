@@ -201,7 +201,6 @@ public final class StringConverters {
       if (tag != null) {
         set.addAll(tag.getValues());
       }
-      return;
     }
   }
 }

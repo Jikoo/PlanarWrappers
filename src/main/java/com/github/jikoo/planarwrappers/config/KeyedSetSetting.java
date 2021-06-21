@@ -10,6 +10,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A setting for {@link Set Sets} of {@link Keyed} objects.
+ *
+ * @param <T> the type of object in the {@code Set}
+ */
 public abstract class KeyedSetSetting<T extends Keyed> extends SimpleSetSetting<T> {
 
   protected KeyedSetSetting(
@@ -28,22 +33,14 @@ public abstract class KeyedSetSetting<T extends Keyed> extends SimpleSetSetting<
   /**
    * Get the {@link Class} expected to be contained by a {@link org.bukkit.Tag Tag}.
    *
-   * @return the Class
+   * @return the {@code Class}
    */
   protected abstract @NotNull Class<T> getTagClass();
 
   /**
-   * Get the registries in which a Tag may exist.
+   * Get the registries in which a {@link org.bukkit.Tag Tag} may exist.
    *
    * @return the registry names
    */
   protected abstract @NotNull Collection<String> getTagRegistries();
-
-  /**
-   * Convert a {@link String} into a usable value.
-   *
-   * @param value the value in {@code String} form
-   * @return the value or {@code null} if the value cannot be parsed
-   */
-  protected abstract @Nullable T convertValue(@NotNull String value);
 }

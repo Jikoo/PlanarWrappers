@@ -23,6 +23,7 @@ import com.github.jikoo.planarwrappers.util.StringConverters;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +38,7 @@ import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -132,6 +134,7 @@ class SettingTest {
               new Vector(10, 5, 1),
               new Vector(20, 10, 2)),
           makeSet(),
+          makeMaterialSet(),
           makeMultimap()
         });
   }
@@ -155,11 +158,37 @@ class SettingTest {
     YamlConfiguration configuration =
         getConfiguration(
             path,
-            Stream.concat(setDefault.stream().map(Material::name), Stream.of("#wall_signs", "#3"))
+            setDefault.stream().map(Material::name).collect(Collectors.toList()),
+            override.stream().map(Material::name).collect(Collectors.toList()));
+    SimpleSetSetting<Material> setting =
+        new SimpleSetSetting<Material>(configuration, path, internalDefault) {
+          @Override
+          protected @Nullable Material convertValue(@NotNull String value) {
+            return StringConverters.toMaterial(value);
+          }
+        };
+
+    return Arguments.of(
+        setting, internalDefault, new HashSet<>(setDefault), new HashSet<>(override));
+  }
+
+  private static Arguments makeMaterialSet() {
+    Set<Material> internalDefault = Collections.singleton(Material.BAMBOO);
+    List<Material> setDefault = new ArrayList<>(Arrays.asList(Material.AIR, Material.ACACIA_BOAT));
+    List<Material> override = Arrays.asList(Material.WET_SPONGE, Material.ARROW);
+    String path = "set_value";
+    YamlConfiguration configuration =
+        getConfiguration(
+            path,
+            Stream.concat(
+                    setDefault.stream().map(Material::name),
+                    Stream.of("#wall_signs", "#3badnamespace", "#not_a_real_tag"))
                 .collect(Collectors.toList()),
             override.stream().map(Material::name).collect(Collectors.toList()));
     SimpleSetSetting<Material> setting =
         new MaterialSetSetting(configuration, path, internalDefault);
+
+    setDefault.addAll(Tag.WALL_SIGNS.getValues());
 
     return Arguments.of(
         setting, internalDefault, new HashSet<>(setDefault), new HashSet<>(override));
