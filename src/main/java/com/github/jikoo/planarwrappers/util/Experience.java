@@ -1,6 +1,7 @@
 package com.github.jikoo.planarwrappers.util;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A utility for managing player experience.
@@ -8,14 +9,13 @@ import org.bukkit.entity.Player;
 public final class Experience {
 
   /**
-   * Calculate a player's total experience based on level and progress to next.
+   * Calculate total {@link Player} experience based on level and progress to next.
    *
-   * @param player the Player
-   * @return the amount of experience the Player has
-   *
+   * @param player the {@code Player}
+   * @return the amount of experience the {@code Player} has
    * @see <a href=http://minecraft.gamepedia.com/Experience#Leveling_up>Experience#Leveling_up</a>
    */
-  public static int getExp(Player player) {
+  public static int getExp(@NotNull Player player) {
     return getExpFromLevel(player.getLevel())
         + Math.round(getExpToNext(player.getLevel()) * player.getExp());
   }
@@ -87,7 +87,7 @@ public final class Experience {
   private static int getExpToNext(int level) {
     if (level >= 30) {
       // Simplified formula. Internal: 112 + (level - 30) * 9
-      return level * 9 + 158;
+      return level * 9 - 158;
     }
     if (level >= 15) {
       // Simplified formula. Internal: 37 + (level - 15) * 5
@@ -98,19 +98,18 @@ public final class Experience {
   }
 
   /**
-   * Change a Player's experience.
-   *
-   * <p>This method is preferred over {@link Player#giveExp(int)}.
-   * <br>In older versions the method does not take differences in exp per level into account.
-   * This leads to overlevelling when granting players large amounts of experience.
-   * <br>In modern versions, while differing amounts of experience per level are accounted for, the
+   * Change experience for a {@link Player}. This method is preferred over
+   * {@link Player#giveExp(int)}.<br>
+   * In older versions the method does not take differences in exp per level into account. This
+   * leads to overlevelling when granting players large amounts of experience.<br>
+   * In modern versions, while differing amounts of experience per level are accounted for, the
    * approach used is loop-heavy and requires an excessive number of calculations, which makes it
    * quite slow.
    *
-   * @param player the Player affected
+   * @param player the {@code Player} affected
    * @param exp the amount of experience to add or remove
    */
-  public static void changeExp(Player player, int exp) {
+  public static void changeExp(@NotNull Player player, int exp) {
     exp += getExp(player);
 
     if (exp < 0) {
