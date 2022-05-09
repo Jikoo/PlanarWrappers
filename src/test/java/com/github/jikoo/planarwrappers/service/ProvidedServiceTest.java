@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
+import com.github.jikoo.planarwrappers.service.ProvidedService.Wrapper;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import org.junit.jupiter.api.AfterEach;
@@ -115,12 +116,13 @@ class ProvidedServiceTest {
     Plugin registrant = MockBukkit.createMockPlugin("Registrant");
     registrant.getServer().getServicesManager().register(Object.class, "not a ServicePriority", registrant, ServicePriority.Normal);
     assertThat("Generic mismatching expected class is present", service.isPresent());
-    assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
+    Wrapper<ServicePriority> wrapper = service.getService();
+    assertThat("Wrapper is not null", wrapper, is(notNullValue()));
     assertThrows(
         ClassCastException.class,
         () -> {
           @SuppressWarnings("unused") // Used to cause ClassCastException
-          ServicePriority priority = service.getService().unwrap();
+          ServicePriority priority = wrapper.unwrap();
         },
         "Generic mismatch throws ClassCastException");
   }
