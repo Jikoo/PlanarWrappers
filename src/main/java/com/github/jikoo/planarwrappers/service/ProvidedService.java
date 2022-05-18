@@ -1,5 +1,7 @@
 package com.github.jikoo.planarwrappers.service;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.function.Supplier;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,10 +21,10 @@ import org.jetbrains.annotations.Nullable;
  * <br>Ex:
  * <pre>
  * /** A bridge for Vault-supporting permissions plugins. &#42;/
- * public class VaultPermission extends ProvidedService&lt;Permission&gt; {
+ * public class VaultPermission extends ProvidedService&lt;net.milkbowl.vault.permission.Permission&gt; {
  *
  *   public VaultPermission(&#64;NotNull Plugin plugin) {
- *     super(plugin, "net.milkbowl.vault.permission.Permission");
+ *     super(plugin);
  *   }
  *
  *   /**
@@ -56,13 +58,11 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ProvidedService<T> implements Listener {
 
   private final @NotNull Plugin plugin;
-  private final @NotNull String serviceClassName;
   private boolean setupDone = false;
   private @Nullable Wrapper<T> wrapper = null;
 
-  protected ProvidedService(@NotNull Plugin plugin, @NotNull String serviceClassName) {
+  protected ProvidedService(@NotNull Plugin plugin) {
     this.plugin = plugin;
-    this.serviceClassName = serviceClassName;
     this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
   }
 
@@ -77,10 +77,36 @@ public abstract class ProvidedService<T> implements Listener {
     return wrapper;
   }
 
-  private @Nullable Class<?> getServiceClass() {
+  @SuppressWarnings("unchecked")
+  private @Nullable Class<T> getServiceClass() {
     try {
-      return Class.forName(serviceClassName);
-    } catch (ClassNotFoundException ignored) {
+      // Find class with ProvidedService superclass.
+      Class<?> clazz = this.getClass();
+      for (; clazz != null; clazz = clazz.getSuperclass()) {
+        Class<?> superClass = clazz.getSuperclass();
+        if (superClass.equals(ProvidedService.class)) {
+          break;
+        }
+      }
+
+      // Should never be possible.
+      if (clazz == null) {
+        //noinspection ConstantConditions IDE does not understand looping over superclass.
+        throw new IllegalStateException(String.format("%s does not subclass ProvidedService!", getClass()));
+      }
+
+      // Get ProvidedService Type from class.
+      Type type = ProvidedService.this.getClass().getGenericSuperclass();
+      // This class is parameterized with a single type. It should always be a ParameterizedType,
+      // and there always should be a single type argument that is the class desired.
+      if (type instanceof ParameterizedType) {
+        Type rawType = ((ParameterizedType) type).getActualTypeArguments()[0];
+         return (Class<T>) rawType;
+      }
+
+      throw new IllegalStateException("Type " + type.getTypeName() + " is not a ParameterizedType!");
+    } catch (TypeNotPresentException ignored) {
+      // Class not present.
       return null;
     }
   }
@@ -133,9 +159,9 @@ public abstract class ProvidedService<T> implements Listener {
     }
 
     // Ensure service class is loaded.
-    Class<?> clazz = getServiceClass();
+    Class<T> clazz = getServiceClass();
     if (clazz == null) {
-      finishSetup(null, () -> serviceClassName + " is not loaded, cannot use integration");
+      finishSetup(null, logServiceClassNotLoaded());
       return;
     }
 
@@ -144,15 +170,11 @@ public abstract class ProvidedService<T> implements Listener {
 
     // Ensure an instance is available.
     if (registration == null) {
-      finishSetup(null, () -> "No provider registered with Bukkit for " + serviceClassName);
+      finishSetup(null, logNoProviderRegistered(clazz));
       return;
     }
 
-    // Can't be helped - we can't pass an actual class or Bukkit won't load
-    // the listeners, and due to the way generics work there's no way to verify
-    // that the provided class name is actually the same as the generic class.
-    @SuppressWarnings("unchecked")
-    T instance = (T) registration.getProvider();
+    T instance = clazz.cast(registration.getProvider());
 
     // If instance hasn't changed, do nothing.
     if (wrapper != null && wrapper.unwrap().equals(instance)) {
@@ -162,9 +184,21 @@ public abstract class ProvidedService<T> implements Listener {
     // Set setupDone false to log changing instance.
     setupDone = false;
 
-    finishSetup(
-        instance,
-        () -> "Hooked into " + serviceClassName + " provider " + instance.getClass().getName());
+    finishSetup(instance, logServiceProviderChange(clazz, instance));
+  }
+
+  protected @Nullable Supplier<@NotNull String> logServiceClassNotLoaded() {
+    return () -> "Service is not loaded, cannot use integration";
+  }
+
+  protected @Nullable Supplier<@NotNull String> logNoProviderRegistered(@NotNull Class<T> clazz) {
+    return () -> "No provider registered with Bukkit for " + clazz.getName();
+  }
+
+  protected @Nullable Supplier<String> logServiceProviderChange(
+      @NotNull Class<T> clazz,
+      @NotNull T instance) {
+    return () -> "Hooked into " + clazz.getName() + " provider " + instance.getClass().getName();
   }
 
   /**

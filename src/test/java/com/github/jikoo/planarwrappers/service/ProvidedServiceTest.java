@@ -4,10 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-import com.github.jikoo.planarwrappers.service.ProvidedService.Wrapper;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +35,7 @@ class ProvidedServiceTest {
   @DisplayName("Hook must report itself absent when no registration is present")
   @Test
   void testNoRegistration() {
-    ProvidedService<Object> service = new ProvidedService<Object>(plugin, "java.lang.Object") {};
+    ProvidedService<Object> service = new ProvidedService<Object>(plugin) {};
     assertThat("Service with no registration is not present", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
   }
@@ -47,17 +45,17 @@ class ProvidedServiceTest {
   void testEarlyRegistration() {
     Plugin registrant = MockBukkit.createMockPlugin("Registrant");
     registrant.getServer().getServicesManager().register(Object.class, "Hello World", registrant, ServicePriority.Normal);
-    ProvidedService<Object> service = new ProvidedService<Object>(plugin, "java.lang.Object") {};
+    ProvidedService<Object> service = new ProvidedService<Object>(plugin) {};
     assertThat("Service is present", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
   }
 
-  @DisplayName("")
+  @DisplayName("Hook must still be usable after redundant registrations")
   @Test
   void testReregistration() {
     Plugin registrant = MockBukkit.createMockPlugin("Registrant");
     registrant.getServer().getServicesManager().register(Object.class, "Hello World", registrant, ServicePriority.Normal);
-    ProvidedService<Object> service = new ProvidedService<Object>(plugin, "java.lang.Object") {};
+    ProvidedService<Object> service = new ProvidedService<Object>(plugin) {};
     assertThat("Service is present", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
 
@@ -66,10 +64,10 @@ class ProvidedServiceTest {
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
   }
 
-  @DisplayName("")
+  @DisplayName("Hook must support registration after creation")
   @Test
   void testLateRegistration() {
-    ProvidedService<Object> service = new ProvidedService<Object>(plugin, "java.lang.Object") {};
+    ProvidedService<Object> service = new ProvidedService<Object>(plugin) {};
     assertThat("Service with no registration is not present", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
 
@@ -79,12 +77,12 @@ class ProvidedServiceTest {
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
   }
 
-  @DisplayName("")
+  @DisplayName("Hook must support deregistration")
   @Test
   void testRemoveRegistration() {
     Plugin registrant = MockBukkit.createMockPlugin("Registrant");
     registrant.getServer().getServicesManager().register(Object.class, "Hello World", registrant, ServicePriority.Normal);
-    ProvidedService<Object> service = new ProvidedService<Object>(plugin, "java.lang.Object") {};
+    ProvidedService<Object> service = new ProvidedService<Object>(plugin) {};
     assertThat("Service is present after registration", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
 
@@ -96,7 +94,7 @@ class ProvidedServiceTest {
   @DisplayName("Hook with unknown/unloaded service must report itself absent")
   @Test
   void testUnknownClass() {
-    ProvidedService<Object> service = new ProvidedService<Object>(plugin, "InvalidClass"){};
+    ProvidedService<UnloadedService> service = new ProvidedService<UnloadedService>(plugin){};
     assertThat("Unknown service is not present", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
 
@@ -104,27 +102,6 @@ class ProvidedServiceTest {
     registrant.getServer().getServicesManager().register(Object.class, "Hello World", registrant, ServicePriority.Normal);
     assertThat("Unknown service is not present after other registration", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
-  }
-
-  @DisplayName("Mismatching generic and class name error only on usage")
-  @Test
-  void testGenericMismatch() {
-    // Unfortunately, due to how generics work there is no way to verify that the generic and class
-    // name match prior to usage as an instance of the generic in live code. It's an easy fix when
-    // it occurs, but it cannot be caught ahead of time by the ProvidedService class.
-    ProvidedService<ServicePriority> service = new ProvidedService<ServicePriority>(plugin, "java.lang.Object") {};
-    Plugin registrant = MockBukkit.createMockPlugin("Registrant");
-    registrant.getServer().getServicesManager().register(Object.class, "not a ServicePriority", registrant, ServicePriority.Normal);
-    assertThat("Generic mismatching expected class is present", service.isPresent());
-    Wrapper<ServicePriority> wrapper = service.getService();
-    assertThat("Wrapper is not null", wrapper, is(notNullValue()));
-    assertThrows(
-        ClassCastException.class,
-        () -> {
-          @SuppressWarnings("unused") // Used to cause ClassCastException
-          ServicePriority priority = wrapper.unwrap();
-        },
-        "Generic mismatch throws ClassCastException");
   }
 
 }
