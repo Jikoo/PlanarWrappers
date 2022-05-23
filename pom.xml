@@ -45,6 +45,14 @@
       <version>23.0.0</version>
     </dependency>
     <dependency>
+      <!-- Explicitly declared due to the fact that TypeToken is no longer beta. -->
+      <!-- Nothing new is used, would just prefer to not have warnings for supported features. -->
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>31.1-jre</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <artifactId>spigot-api</artifactId>
       <groupId>org.spigotmc</groupId>
       <scope>provided</scope>
