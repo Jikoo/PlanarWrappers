@@ -75,7 +75,7 @@
       <artifactId>MockBukkit-v1.18</artifactId>
       <groupId>com.github.seeseemelk</groupId>
       <scope>test</scope>
-      <version>1.15.0</version>
+      <version>1.24.1</version>
     </dependency>
   </dependencies>
   <groupId>com.github.jikoo</groupId>
