@@ -24,7 +24,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @DisplayName("Feature: Generic hook for a specific plugin")
 @TestInstance(Lifecycle.PER_METHOD)
-public class PluginProvidedServiceTest {
+class PluginProvidedServiceTest {
 
   Plugin plugin;
 

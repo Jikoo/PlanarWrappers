@@ -15,7 +15,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @DisplayName("Feature: Gracefully handle classes not loaded at runtime")
 @TestInstance(Lifecycle.PER_METHOD)
-public class UnloadedServiceTest {
+class UnloadedServiceTest {
 
   @BeforeEach
   void beforeEach() {

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @DisplayName("Feature: Generic hook via the Bukkit ServicesManager")
 @TestInstance(Lifecycle.PER_METHOD)
-public class ManagerProvidedServiceTest {
+class ManagerProvidedServiceTest {
 
   Plugin plugin;
   Plugin registrant;

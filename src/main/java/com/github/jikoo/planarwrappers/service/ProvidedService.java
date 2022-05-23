@@ -54,7 +54,7 @@ public abstract class ProvidedService<T> implements Listener {
       // Class not present.
       return null;
     } catch (NoSuchFieldException e) {
-      throw new RuntimeException(e);
+      throw new IllegalStateException(e);
     }
   }
 
