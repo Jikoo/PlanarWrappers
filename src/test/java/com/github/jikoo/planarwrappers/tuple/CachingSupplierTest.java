@@ -4,8 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.util.MockClock;
+import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +51,8 @@ class CachingSupplierTest {
   @Test
   void testCachedValueExpires() {
     Supplier<Boolean> singleUseSupplier = new SingleUseSupplier<>(true);
-    MockClock clock = new MockClock();
+    Clock clock = mock(Clock.class);
+    when(clock.millis()).thenReturn(0L);
     Supplier<Boolean> cache = new CachingSupplier<>(
         singleUseSupplier,
         5,
@@ -62,7 +65,7 @@ class CachingSupplierTest {
         "Supplier may only be used once");
     assertDoesNotThrow(cache::get, "Supplier must only be used once");
 
-    clock.add(5, TimeUnit.MILLISECONDS);
+    when(clock.millis()).thenReturn(5L);
     assertThrows(
         IllegalStateException.class,
         cache::get,

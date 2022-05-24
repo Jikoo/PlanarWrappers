@@ -37,9 +37,10 @@ public class CachingSupplier<T> implements Supplier<T> {
    * @return the cached value
    */
   public T get() {
-    if (lastUpdate <= clock.millis() - cacheDuration) {
+    long now = clock.millis();
+    if (lastUpdate <= now - cacheDuration) {
       value = supplier.get();
-      lastUpdate = clock.millis();
+      lastUpdate = now;
     }
     return value;
   }
