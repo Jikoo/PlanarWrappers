@@ -20,9 +20,8 @@ public class VaultEconomy extends ManagerProvidedService<Economy> {
   }
 
   @Override
-  public boolean isPresent() {
-    Wrapper<Economy> service = getService();
-    return service != null && service.unwrap().isEnabled();
+  protected boolean isUsable(@NotNull Economy provider) {
+    return provider.isEnabled();
   }
 
   @Override

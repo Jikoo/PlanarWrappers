@@ -1,5 +1,6 @@
 package com.github.jikoo.planarwrappers.service;
 
+import java.util.Collection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.ServiceEvent;
 import org.bukkit.event.server.ServiceRegisterEvent;
@@ -60,10 +61,22 @@ public abstract class ManagerProvidedService<T> extends ProvidedService<T> {
 
   @Override
   @Nullable T getRegistration(@NotNull Class<T> clazz) {
-    RegisteredServiceProvider<T> registration = plugin.getServer().getServicesManager()
-        .getRegistration(clazz);
-    return registration != null ? registration.getProvider() : null;
+    Collection<RegisteredServiceProvider<T>> registrations = plugin.getServer().getServicesManager()
+        .getRegistrations(clazz);
+    // Registration listings are ordered by priority by the SimpleServiceManager.
+    for (RegisteredServiceProvider<T> registration : registrations) {
+      T provider = registration.getProvider();
+
+      // Ensure that the provider is usable. Certain providers can be disabled via external means.
+      if (isUsable(provider)) {
+        return provider;
+      }
+    }
+
+    return null;
   }
+
+  protected abstract boolean isUsable(@NotNull T provider);
 
   /**
    * {@link EventHandler} for {@link ServiceRegisterEvent ServiceRegisterEvents} in case of a

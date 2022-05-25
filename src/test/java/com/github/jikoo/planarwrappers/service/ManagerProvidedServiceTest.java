@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.nullValue;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,11 +35,24 @@ class ManagerProvidedServiceTest {
     MockBukkit.unmock();
   }
 
+  @DisplayName("Hook must not report unusable registration as present")
+  @Test
+  void testUnusableRegistration() {
+    registrant.getServer().getServicesManager().register(Object.class, "Hello World", registrant, ServicePriority.Normal);
+    ProvidedService<Object> service = new ManagerProvidedService<Object>(plugin) {
+      @Override
+      protected boolean isUsable(@NotNull Object provider) {
+        return false;
+      }
+    };
+    assertThat("Service is not present", service.isPresent(), is(false));
+  }
+
   @DisplayName("Hook must report itself present if a registration was added prior to creation")
   @Test
   void testEarlyRegistration() {
     registrant.getServer().getServicesManager().register(Object.class, "Hello World", registrant, ServicePriority.Normal);
-    ProvidedService<Object> service = new ManagerProvidedService<Object>(plugin) {};
+    ProvidedService<Object> service = getService();
     assertThat("Service is present", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
   }
@@ -47,7 +61,7 @@ class ManagerProvidedServiceTest {
   @Test
   void testReregistration() {
     registrant.getServer().getServicesManager().register(Object.class, "Hello World", registrant, ServicePriority.Normal);
-    ProvidedService<Object> service = new ManagerProvidedService<Object>(plugin) {};
+    ProvidedService<Object> service = getService();
     assertThat("Service is present", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
 
@@ -59,7 +73,7 @@ class ManagerProvidedServiceTest {
   @DisplayName("Hook must support registration after creation")
   @Test
   void testLateRegistration() {
-    ProvidedService<Object> service = new ManagerProvidedService<Object>(plugin) {};
+    ProvidedService<Object> service = getService();
     assertThat("Service with no registration is not present", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
 
@@ -72,13 +86,22 @@ class ManagerProvidedServiceTest {
   @Test
   void testRemoveRegistration() {
     registrant.getServer().getServicesManager().register(Object.class, "Hello World", registrant, ServicePriority.Normal);
-    ProvidedService<Object> service = new ManagerProvidedService<Object>(plugin) {};
+    ProvidedService<Object> service = getService();
     assertThat("Service is present after registration", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
 
     registrant.getServer().getServicesManager().unregisterAll(registrant);
     assertThat("Service is not present after unregister", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
+  }
+
+  private @NotNull ManagerProvidedService<Object> getService() {
+    return new ManagerProvidedService<Object>(plugin) {
+      @Override
+      protected boolean isUsable(@NotNull Object provider) {
+        return true;
+      }
+    };
   }
 
 }
