@@ -34,7 +34,7 @@ public abstract class ProvidedService<T> implements Listener {
     return getService() != null;
   }
 
-  protected @Nullable Wrapper<T> getService() {
+  protected final @Nullable Wrapper<T> getService() {
     // Attempt to initialize if not already set up.
     wrapClass(false);
 

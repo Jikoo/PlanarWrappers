@@ -58,6 +58,18 @@
       <scope>provided</scope>
       <version>1.18.1-R0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.MilkBowl</groupId>
+      <artifactId>VaultAPI</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+      <scope>provided</scope>
+      <version>1.7</version>
+    </dependency>
     <!-- Testing -->
     <dependency>
       <artifactId>junit-jupiter</artifactId>
