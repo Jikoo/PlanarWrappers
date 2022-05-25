@@ -5,34 +5,65 @@
   <artifactId>planarwrappers</artifactId>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+              <id>prepare-agent</id>
+            </execution>
+            <execution>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <id>report</id>
+            </execution>
+          </executions>
+          <groupId>org.jacoco</groupId>
+          <version>0.8.8</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <groupId>org.apache.maven.plugins</groupId>
+          <version>3.0.0-M5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>3.1.0</version>
+          <executions>
+            <execution>
+              <phase>process-test-classes</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <target>
+              <!--
+                ~ Delete test class that is supposed to not be loaded.
+                ~ Note that this cannot be done using a maven-compiler-plugin exclusion;
+                ~ it ignores exclusions that are dependencies of other classes.
+               -->
+              <delete file="target/test-classes/com/github/jikoo/planarwrappers/service/UnloadedService.class"/>
+            </target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
-        <version>3.0.0-M5</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <target>
-            <!--
-              ~ Delete test class that is supposed to not be loaded.
-              ~ Note that this cannot be done using a maven-compiler-plugin exclusion;
-              ~ it ignores exclusions that are dependencies of other classes.
-             -->
-            <delete file="target/test-classes/com/github/jikoo/planarwrappers/service/UnloadedService.class"/>
-          </target>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -107,22 +138,7 @@
         <plugins>
           <plugin>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-                <id>prepare-agent</id>
-              </execution>
-              <execution>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-                <id>report</id>
-              </execution>
-            </executions>
             <groupId>org.jacoco</groupId>
-            <version>0.8.6</version>
           </plugin>
         </plugins>
       </build>

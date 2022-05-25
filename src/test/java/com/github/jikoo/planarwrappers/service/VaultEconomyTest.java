@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -34,6 +35,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@DisplayName("Feature: Simplified hook for Vault softdependence")
 @TestInstance(Lifecycle.PER_CLASS)
 class VaultEconomyTest {
 
@@ -85,7 +87,9 @@ class VaultEconomyTest {
 
   @Test
   void isPresentNotEnabled() {
-    when(registerEcon().isEnabled()).thenReturn(false);
+    Economy economy = mockEcon();
+    when(economy.isEnabled()).thenReturn(false);
+    plugin.getServer().getServicesManager().register(Economy.class, economy, plugin, ServicePriority.Normal);
     assertThat("Disabled economy is not present", econHook.isPresent(), is(false));
   }
 
@@ -95,6 +99,7 @@ class VaultEconomyTest {
     assertThat("Enabled economy is present", econHook.isPresent());
   }
 
+  @DisplayName("Logging is performed by default")
   @Nested
   @TestInstance(Lifecycle.PER_CLASS)
   class Logging {
