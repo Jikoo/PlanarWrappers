@@ -2,12 +2,9 @@ package com.github.jikoo.planarwrappers.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
@@ -19,14 +16,11 @@ import com.github.jikoo.planarwrappers.service.VaultPermission.FrozenServerOp;
 import java.util.function.Supplier;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
-import org.bukkit.plugin.SimplePluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
@@ -43,6 +37,7 @@ class VaultPermissionTest {
 
   private static final String TRUE_PERMISSION = "permission.true";
   private static final String FALSE_PERMISSION = "permission.false";
+  private static final String UNDECLARED_PERMISSION = "permission.undeclared";
 
   Plugin plugin;
   VaultPermission permHook;
@@ -106,12 +101,20 @@ class VaultPermissionTest {
   void getDefaultState(boolean isOp) {
     OfflinePlayer player = newOppableOffline(isOp);
     assertThat(
-        "Bukkit's PermissibleBase is used to calculate defaults.",
+        "False permission is false for PermissibleBase.",
         permHook.hasPermission(player, FALSE_PERMISSION, null),
-        is(isOp));
+        is(false));
     assertThat(
-        "Bukkit's PermissibleBase is used to calculate defaults.",
+        "True permission is true for PermissibleBase.",
         permHook.hasPermission(player, TRUE_PERMISSION, null));
+    assertThat(
+        "Undeclared permission is not registered.",
+        MockBukkit.getMock().getPluginManager().getPermission(UNDECLARED_PERMISSION),
+        is(nullValue()));
+    assertThat(
+        "Undeclared permission uses op status for PermissibleBase.",
+        permHook.hasPermission(player, UNDECLARED_PERMISSION, null),
+        is(isOp));
   }
 
   private @NotNull OfflinePlayer newOppableOffline(boolean isOp) {
@@ -134,31 +137,19 @@ class VaultPermissionTest {
     // permissions the same way Bukkit does; Bukkit's SimplePluginManager cannot be used directly
     // without breaking Mockbukkit's plugin loading. The easiest solution is just to pass the
     // permission-related queries to a backing SimplePluginManager instance.
+    PluginManager pluginManager = MockBukkit.mock(new ServerMock() {
+      private final PluginManagerMock pluginManagerMock = new PermPassingPluginManager(this);
 
-    // Spy a ServerMock and its PluginManagerMock, then initialize MockBukkit with the whole mess.
-    ServerMock server = spy(new ServerMock());
-    PluginManagerMock mockManager = spy(server.getPluginManager());
-    when(server.getPluginManager()).thenReturn(mockManager);
-    MockBukkit.mock(server);
+      @Override
+      public @NotNull PluginManagerMock getPluginManager() {
+        return this.pluginManagerMock;
+      }
+    }).getPluginManager();
 
-    // Pass methods to a backing SimplePluginManager.
-    PluginManager simplePluginManager = new SimplePluginManager(server, mock(SimpleCommandMap.class));
-    when(mockManager.getDefaultPermissions(anyBoolean()))
-        .thenAnswer(invocation ->
-            simplePluginManager.getDefaultPermissions(invocation.getArgument(0)));
-    doAnswer(invocation -> {
-      simplePluginManager.unsubscribeFromDefaultPerms(invocation.getArgument(0), invocation.getArgument(1));
-      return null;
-    }).when(mockManager).unsubscribeFromDefaultPerms(anyBoolean(), any(Permissible.class));
-    doAnswer(invocation -> {
-      simplePluginManager.subscribeToDefaultPerms(invocation.getArgument(0), invocation.getArgument(1));
-      return null;
-    }).when(mockManager).subscribeToDefaultPerms(anyBoolean(), any(Permissible.class));
-
-    // Finally, set up permissions.
-    simplePluginManager.addPermission(
+    // Set up permissions.
+    pluginManager.addPermission(
         new org.bukkit.permissions.Permission(TRUE_PERMISSION, PermissionDefault.TRUE));
-    simplePluginManager.addPermission(
+    pluginManager.addPermission(
         new org.bukkit.permissions.Permission(FALSE_PERMISSION, PermissionDefault.FALSE));
   }
 
