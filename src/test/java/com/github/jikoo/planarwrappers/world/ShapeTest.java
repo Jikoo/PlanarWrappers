@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.UnimplementedOperationException;
 import be.seeseemelk.mockbukkit.block.data.BlockDataMock;
 import com.github.jikoo.planarwrappers.world.data.MockDirectional;
 import com.github.jikoo.planarwrappers.world.data.MockMultipleFacing;
@@ -57,13 +56,18 @@ class ShapeTest {
         () -> shape.set(0, 0, 0, Material.WOODEN_SWORD));
   }
 
-  @DisplayName("MockBukkit does not support Server#createBlockData")
-  @Test
-  void testCreateBlockData() {
+  @DisplayName("Place blocks relative to key location by material")
+  @ParameterizedTest
+  @CsvSource({"NORTH", "EAST", "SOUTH", "WEST"})
+  void testCreateBlockData(Direction direction) {
     Shape shape = new Shape();
-    assertThrows(
-        UnimplementedOperationException.class,
-        () -> shape.set(0, 0, 0, Material.ACACIA_PLANKS));
+    Material blockType = Material.ACACIA_PLANKS;
+    shape.set(0, 0, 2, blockType);
+
+    Block block = world.getBlockAt(10, 10, 10);
+    shape.build(block, direction);
+    Block relative = block.getRelative(direction.toBlockFace(), 2);
+    assertThat("Relative block must be set correctly.", relative.getType(), is(blockType));
   }
 
   @DisplayName("Place blocks relative to key location")
