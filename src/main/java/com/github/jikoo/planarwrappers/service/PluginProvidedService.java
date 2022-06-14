@@ -21,7 +21,7 @@ public abstract class PluginProvidedService<T extends JavaPlugin> extends Provid
   }
 
   @Override
-  @Nullable T getRegistration(@NotNull Class<T> clazz) {
+  protected @Nullable T getRegistration(@NotNull Class<T> clazz) {
     try {
       JavaPlugin providingPlugin = JavaPlugin.getProvidingPlugin(clazz);
       if (providingPlugin.isEnabled() && clazz.isInstance(providingPlugin)) {

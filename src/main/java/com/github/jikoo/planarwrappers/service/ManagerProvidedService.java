@@ -60,7 +60,7 @@ public abstract class ManagerProvidedService<T> extends ProvidedService<T> {
   }
 
   @Override
-  @Nullable T getRegistration(@NotNull Class<T> clazz) {
+  protected @Nullable T getRegistration(@NotNull Class<T> clazz) {
     Collection<RegisteredServiceProvider<T>> registrations = plugin.getServer().getServicesManager()
         .getRegistrations(clazz);
     // Registration listings are ordered by priority by the SimpleServiceManager.

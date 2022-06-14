@@ -105,7 +105,7 @@ public abstract class ProvidedService<T> implements Listener {
     finishSetup(instance, logServiceProviderChange(clazz, instance));
   }
 
-  abstract @Nullable T getRegistration(@NotNull Class<T> clazz);
+  protected abstract @Nullable T getRegistration(@NotNull Class<T> clazz);
 
   protected @Nullable Supplier<@NotNull String> logServiceClassNotLoaded() {
     return () -> "Service is not loaded, cannot use integration";

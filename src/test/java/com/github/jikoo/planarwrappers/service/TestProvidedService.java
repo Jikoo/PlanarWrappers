@@ -23,7 +23,7 @@ public class TestProvidedService<T> extends ProvidedService<T> {
   }
 
   @Override
-  @Nullable T getRegistration(@NotNull Class<T> clazz) {
+  protected @Nullable T getRegistration(@NotNull Class<T> clazz) {
     return value;
   }
 
