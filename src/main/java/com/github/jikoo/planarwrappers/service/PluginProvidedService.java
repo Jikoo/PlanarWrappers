@@ -1,6 +1,6 @@
 package com.github.jikoo.planarwrappers.service;
 
-import org.bukkit.event.EventHandler;
+import com.github.jikoo.planarwrappers.event.Event;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.PluginEvent;
@@ -18,6 +18,9 @@ public abstract class PluginProvidedService<T extends JavaPlugin> extends Provid
 
   protected PluginProvidedService(@NotNull Plugin plugin) {
     super(plugin);
+
+    Event.register(PluginEnableEvent.class, this::handlePlugin, plugin);
+    Event.register(PluginDisableEvent.class, this::handlePlugin, plugin);
   }
 
   @Override
@@ -36,28 +39,6 @@ public abstract class PluginProvidedService<T extends JavaPlugin> extends Provid
       }
     }
     return null;
-  }
-
-  /**
-   * {@link EventHandler} for {@link PluginEnableEvent PluginEnableEvents} in case of a provider
-   * being enabled.
-   *
-   * @param event the event
-   */
-  @EventHandler
-  public final void onPluginEnable(@NotNull PluginEnableEvent event) {
-    handlePlugin(event);
-  }
-
-  /**
-   * {@link EventHandler} for {@link PluginDisableEvent PluginDisableEvents} in case of a provider
-   * being disabled.
-   *
-   * @param event the event
-   */
-  @EventHandler
-  public final void onPluginDisable(@NotNull PluginDisableEvent event) {
-    handlePlugin(event);
   }
 
   private void handlePlugin(@NotNull PluginEvent event) {

@@ -3,7 +3,6 @@ package com.github.jikoo.planarwrappers.service;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.function.Supplier;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,10 +12,14 @@ import org.jetbrains.annotations.VisibleForTesting;
  * A wrapper for an implementation provided by another {@link Plugin}. Gracefully handles classes
  * being loaded at runtime.
  *
- * <p>Note that implementations are not allowed to be generic. This is not strictly necessary in all
- * cases, but select usages prevent reification of the generic type when fetching service class.
+ * <p>If your class requires listeners to be registered, you cannot rely on Bukkit's ServiceManager
+ * to register them. Consider using the
+ * {@link com.github.jikoo.planarwrappers.event.Event Event} utility or similar.
+ *
+ * <p>Implementations are not allowed to be generic. This is not strictly necessary in all cases,
+ * but select usages prevent reification of the generic type when fetching service class.
  */
-public abstract class ProvidedService<T> implements Listener {
+public abstract class ProvidedService<T> {
 
   protected final @NotNull Plugin plugin;
   private boolean setupDone = false;
@@ -24,7 +27,6 @@ public abstract class ProvidedService<T> implements Listener {
 
   protected ProvidedService(@NotNull Plugin plugin) {
     this.plugin = plugin;
-    this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
     if (getClass().getTypeParameters().length > 0) {
       throw new IllegalStateException("ProvidedService may not be generic! For simplicity, make the class abstract.");
     }

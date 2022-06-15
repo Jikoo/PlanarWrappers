@@ -1,10 +1,9 @@
 package com.github.jikoo.planarwrappers.service;
 
+import com.github.jikoo.planarwrappers.event.Event;
 import java.util.Collection;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.ServiceEvent;
 import org.bukkit.event.server.ServiceRegisterEvent;
-import org.bukkit.event.server.ServiceUnregisterEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +56,9 @@ public abstract class ManagerProvidedService<T> extends ProvidedService<T> {
 
   protected ManagerProvidedService(@NotNull Plugin plugin) {
     super(plugin);
+
+    Event.register(ServiceRegisterEvent.class, this::handleService, plugin);
+    Event.register(ServiceRegisterEvent.class, this::handleService, plugin);
   }
 
   @Override
@@ -77,28 +79,6 @@ public abstract class ManagerProvidedService<T> extends ProvidedService<T> {
   }
 
   protected abstract boolean isUsable(@NotNull T provider);
-
-  /**
-   * {@link EventHandler} for {@link ServiceRegisterEvent ServiceRegisterEvents} in case of a
-   * provider being registered.
-   *
-   * @param event the event
-   */
-  @EventHandler
-  public final void onServiceRegister(@NotNull ServiceRegisterEvent event) {
-    handleService(event);
-  }
-
-  /**
-   * {@link EventHandler} for {@link ServiceUnregisterEvent ServiceUnregisterEvents} in case of a
-   * provider being unregistered.
-   *
-   * @param event the event
-   */
-  @EventHandler
-  public final void onServiceUnregister(@NotNull ServiceUnregisterEvent event) {
-    handleService(event);
-  }
 
   private void handleService(@NotNull ServiceEvent event) {
     // If already set up, ensure that provider is present.
