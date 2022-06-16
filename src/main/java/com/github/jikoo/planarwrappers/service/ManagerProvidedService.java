@@ -4,6 +4,7 @@ import com.github.jikoo.planarwrappers.event.Event;
 import java.util.Collection;
 import org.bukkit.event.server.ServiceEvent;
 import org.bukkit.event.server.ServiceRegisterEvent;
+import org.bukkit.event.server.ServiceUnregisterEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +59,7 @@ public abstract class ManagerProvidedService<T> extends ProvidedService<T> {
     super(plugin);
 
     Event.register(ServiceRegisterEvent.class, this::handleService, plugin);
-    Event.register(ServiceRegisterEvent.class, this::handleService, plugin);
+    Event.register(ServiceUnregisterEvent.class, this::handleService, plugin);
   }
 
   @Override
