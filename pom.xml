@@ -101,7 +101,7 @@
       </exclusions>
       <optional>true</optional>
       <scope>provided</scope>
-      <version>1.7</version>
+      <version>1.7.1</version>
     </dependency>
     <!-- Testing -->
     <dependency>
