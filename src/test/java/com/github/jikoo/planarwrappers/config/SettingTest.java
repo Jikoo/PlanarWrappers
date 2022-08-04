@@ -4,8 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
 import com.github.jikoo.planarwrappers.config.impl.BooleanSetting;
 import com.github.jikoo.planarwrappers.config.impl.ColorSetting;
 import com.github.jikoo.planarwrappers.config.impl.DoubleSetting;
@@ -32,12 +34,16 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Server;
 import org.bukkit.Tag;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,7 +52,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestInstance;
@@ -61,7 +66,30 @@ class SettingTest {
 
   @BeforeAll
   void beforeAll() {
-    MockBukkit.mock();
+    Server mock = mock(Server.class);
+    when(mock.getLogger()).thenReturn(Logger.getLogger("bukkit"));
+    when(mock.getRegistry(notNull())).thenReturn(null);
+    when(mock.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class))
+        .thenReturn(new Tag<>() {
+          private final Set<Material> materials = Set.of(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN);
+          @Override
+          public boolean isTagged(@NotNull Material item) {
+            return materials.contains(item);
+          }
+
+          @NotNull
+          @Override
+          public Set<Material> getValues() {
+            return materials;
+          }
+
+          @NotNull
+          @Override
+          public NamespacedKey getKey() {
+            return NamespacedKey.minecraft("wall_signs");
+          }
+        });
+    Bukkit.setServer(mock);
   }
 
   private static final String INVALID_OVERRIDE = "%invalid%";
@@ -161,7 +189,7 @@ class SettingTest {
             setDefault.stream().map(Material::name).collect(Collectors.toList()),
             override.stream().map(Material::name).collect(Collectors.toList()));
     SimpleSetSetting<Material> setting =
-        new SimpleSetSetting<Material>(configuration, path, internalDefault) {
+        new SimpleSetSetting<>(configuration, path, internalDefault) {
           @Override
           protected @Nullable Material convertValue(@NotNull String value) {
             return StringConverters.toMaterial(value);
@@ -219,7 +247,7 @@ class SettingTest {
         override);
 
     SimpleMultimapSetting<String, Material> setting =
-        new SimpleMultimapSetting<String, Material>(configuration, path, internalDefault) {
+        new SimpleMultimapSetting<>(configuration, path, internalDefault) {
 
           @Override
           protected @NotNull String convertKey(@NotNull String key) {
@@ -275,7 +303,7 @@ class SettingTest {
     YamlConfiguration configuration = new YamlConfiguration();
     configuration.set(key, value);
     SimpleMultimapSetting<Material, String> setting =
-        new SimpleMultimapSetting<Material, String>(
+        new SimpleMultimapSetting<>(
             configuration, "multimap_value", ImmutableMultimap.of()) {
           @Override
           protected @Nullable Material convertKey(@NotNull String key) {
@@ -307,10 +335,5 @@ class SettingTest {
 
     assertThrows(
         IllegalArgumentException.class, () -> new EnumSetting<>(config, key, Material.AIR));
-  }
-
-  @AfterAll
-  void afterAll() {
-    MockBukkit.unmock();
   }
 }

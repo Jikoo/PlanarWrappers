@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.mocking;
+package com.github.jikoo.planarwrappers.mock;
 
 import java.lang.reflect.Field;
 import org.bukkit.Bukkit;

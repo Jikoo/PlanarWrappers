@@ -2,7 +2,6 @@ package com.github.jikoo.planarwrappers.world;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +16,7 @@ public class TransformableBlockData {
   private @Nullable List<BlockDataTransformer> transformers;
 
   public TransformableBlockData(@NotNull Material material) {
-    this.blockData = Bukkit.createBlockData(material);
+    this.blockData = material.createBlockData();
     this.transformers = null;
   }
 

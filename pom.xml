@@ -60,10 +60,23 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
+        <version>3.0.0-M7</version>
+        <configuration>
+          <!-- Github Actions offers 2 cores for Linux. Test stonks 📈 -->
+          <forkCount>2</forkCount>
+          <!-- Bukkit initializes so many static objects that we cannot reasonably reuse forks. -->
+          <reuseForks>false</reuseForks>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
       </plugin>
     </plugins>
   </build>
@@ -147,9 +160,6 @@
       <id>sonarcloud</id>
 
       <properties>
-        <maven.compiler.release>11</maven.compiler.release>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -162,9 +172,8 @@
   </profiles>
 
   <properties>
-    <maven.compiler.release>8</maven.compiler.release>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>

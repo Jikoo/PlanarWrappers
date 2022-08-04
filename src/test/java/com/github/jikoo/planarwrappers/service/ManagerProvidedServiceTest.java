@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.mocking.BukkitHelper;
+import com.github.jikoo.planarwrappers.mock.BukkitHelper;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -64,7 +64,7 @@ class ManagerProvidedServiceTest {
   @Test
   void testUnusableRegistration() {
     manager.register(Object.class, "Hello World", registrant, ServicePriority.Normal);
-    ProvidedService<Object> service = new ManagerProvidedService<Object>(plugin) {
+    ProvidedService<Object> service = new ManagerProvidedService<>(plugin) {
       @Override
       protected boolean isUsable(@NotNull Object provider) {
         return false;
@@ -121,7 +121,7 @@ class ManagerProvidedServiceTest {
   }
 
   private @NotNull ManagerProvidedService<Object> getService() {
-    return new ManagerProvidedService<Object>(plugin) {
+    return new ManagerProvidedService<>(plugin) {
       @Override
       protected boolean isUsable(@NotNull Object provider) {
         return true;

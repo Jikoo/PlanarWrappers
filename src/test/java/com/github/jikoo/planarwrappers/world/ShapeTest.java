@@ -3,20 +3,21 @@ package com.github.jikoo.planarwrappers.world;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.block.data.BlockDataMock;
-import com.github.jikoo.planarwrappers.world.data.MockDirectional;
-import com.github.jikoo.planarwrappers.world.data.MockMultipleFacing;
-import com.github.jikoo.planarwrappers.world.data.MockOrientable;
-import com.github.jikoo.planarwrappers.world.data.MockRotatable;
+import com.github.jikoo.planarwrappers.mock.world.BlockDataMocks;
+import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.bukkit.Axis;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -25,7 +26,6 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.block.data.Rotatable;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,8 +43,11 @@ class ShapeTest {
 
   @BeforeAll
   void beforeAll() {
-    ServerMock mock = MockBukkit.mock();
-    world = mock.addSimpleWorld("world");
+    Server server = mock(Server.class);
+    when(server.createBlockData(any(Material.class))).thenAnswer(parameters -> BlockDataMocks.newData(parameters.getArgument(0)));
+    when(server.getLogger()).thenReturn(Logger.getLogger("bukkit"));
+    Bukkit.setServer(server);
+    world = WorldMocks.newWorld("world");
   }
 
   @DisplayName("Non-block material must throw exception")
@@ -76,7 +79,7 @@ class ShapeTest {
   void testBlockRotation(Direction direction) {
     Shape shape = new Shape();
     Material blockType = Material.ACACIA_PLANKS;
-    shape.set(0, 0, 2, createData(blockType, BlockDataMock::new));
+    shape.set(0, 0, 2, createData(blockType, BlockDataMocks::newData));
 
     Block block = world.getBlockAt(10, 10, 10);
     shape.build(block, direction);
@@ -110,24 +113,23 @@ class ShapeTest {
       BlockFace face;
       Axis axis;
       switch (direction) {
-        case NORTH:
+        case NORTH -> {
           face = BlockFace.NORTH;
           axis = Axis.Z;
-          break;
-        case EAST:
+        }
+        case EAST -> {
           face = BlockFace.EAST;
           axis = Axis.X;
-          break;
-        case SOUTH:
+        }
+        case SOUTH -> {
           face = BlockFace.SOUTH;
           axis = Axis.Z;
-          break;
-        case WEST:
+        }
+        case WEST -> {
           face = BlockFace.WEST;
           axis = Axis.X;
-          break;
-        default:
-          throw new IllegalStateException("Unexpected direction");
+        }
+        default -> throw new IllegalStateException("Unexpected direction");
       }
       arguments[index] = Arguments.of(
           direction,
@@ -163,28 +165,23 @@ class ShapeTest {
   }
 
   private TransformableBlockData getMultipleFacing() {
-    return createData(Material.VINE, MockMultipleFacing::new)
+    return createData(Material.VINE, BlockDataMocks::multipleFacing)
         .withTransformer(
             new MultipleFacingTransformer(EnumSet.of(Direction.NORTH, Direction.SOUTH)));
   }
 
   private TransformableBlockData getOrientable() {
-    return createData(Material.BONE_BLOCK, MockOrientable::new)
+    return createData(Material.BONE_BLOCK, BlockDataMocks::orientable)
         .withTransformer(new OrientableTransformer(Direction.NORTH));
   }
 
   private TransformableBlockData getDirectional() {
-    return createData(Material.SMOOTH_RED_SANDSTONE_STAIRS, MockDirectional::new)
+    return createData(Material.SMOOTH_RED_SANDSTONE_STAIRS, BlockDataMocks::directional)
         .withTransformer(new DirectionalTransformer(Direction.NORTH));
   }
 
   private TransformableBlockData getRotatable() {
-    return createData(Material.CRIMSON_WALL_SIGN, MockRotatable::new)
+    return createData(Material.CRIMSON_WALL_SIGN, BlockDataMocks::rotatable)
         .withTransformer(new RotatableTransformer(Direction.NORTH));
-  }
-
-  @AfterAll
-  void afterAll() {
-    MockBukkit.unmock();
   }
 }
