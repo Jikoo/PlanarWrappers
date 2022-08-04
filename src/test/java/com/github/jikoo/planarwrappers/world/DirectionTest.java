@@ -2,15 +2,13 @@ package com.github.jikoo.planarwrappers.world;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.bukkit.Location;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,14 +20,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DirectionTest {
 
-  PlayerMock player;
-
-  @BeforeAll
-  void beforeAll() {
-    ServerMock mock = MockBukkit.mock();
-    player = mock.addPlayer("SampleText");
-  }
-
   @ParameterizedTest
   @CsvSource({
       "-45, SOUTH", "0, SOUTH", "44.9, SOUTH", "720, SOUTH",
@@ -37,8 +27,9 @@ class DirectionTest {
       "135, NORTH", "180, NORTH", "224.9, NORTH", "-135.1, NORTH",
       "-135, EAST", "-90, EAST", "-45.1, EAST", "270, EAST"})
   void testPlayerFacing(float yaw, Direction direction) {
-    player.setLocation(new Location(null, 0, 0, 0, yaw, 0));
-    assertThat("Direction must be obtained from yaw", Direction.getFacingDirection(player), is(direction));
+    Player mock = mock(Player.class);
+    when(mock.getLocation()).thenReturn(new Location(null, 0, 0, 0, yaw, 0));
+    assertThat("Direction must be obtained from yaw", Direction.getFacingDirection(mock), is(direction));
   }
 
   @ParameterizedTest
@@ -60,10 +51,5 @@ class DirectionTest {
         Arguments.of("West", Direction.WEST),
         Arguments.of("WEST", Direction.WEST)
     });
-  }
-
-  @AfterAll
-  void afterAll() {
-    MockBukkit.unmock();
   }
 }

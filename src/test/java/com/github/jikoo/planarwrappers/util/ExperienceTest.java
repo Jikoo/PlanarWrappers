@@ -2,14 +2,17 @@ package com.github.jikoo.planarwrappers.util;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.bukkit.entity.Player;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,18 +27,30 @@ import org.junit.jupiter.params.provider.MethodSource;
 class ExperienceTest {
 
   private Player player;
+  AtomicInteger level = new AtomicInteger();
+  AtomicFloat levelProgress = new AtomicFloat();
 
   @BeforeAll
   void beforeAll() {
-    ServerMock mock = MockBukkit.mock();
-    player = mock.addPlayer();
+    player = mock(Player.class);
+
+    when(player.getLevel()).thenAnswer(invocation -> level.get());
+    doAnswer(invocation -> {
+      level.set(invocation.getArgument(0, Integer.class));
+      return null;
+    }).when(player).setLevel(anyInt());
+
+    when(player.getExp()).thenAnswer(invocation -> levelProgress.get());
+    doAnswer(invocation -> {
+      levelProgress.set(invocation.getArgument(0, Float.class));
+      return null;
+    }).when(player).setExp(anyFloat());
   }
 
   @BeforeEach
   void setUp() {
-    player.setLevel(0);
-    player.setExp(0);
-    player.setTotalExperience(0);
+    level.set(0);
+    levelProgress.set(0.0F);
   }
 
   @DisplayName("Ensure calculated level and experience match vanilla.")
@@ -83,9 +98,8 @@ class ExperienceTest {
   @ParameterizedTest
   @MethodSource("getChanges")
   void testChangeExp(int start, int change) {
-    player.giveExp(start);
+    Experience.changeExp(player, start);
 
-    assertThat("Starting experience must be correct", player.getTotalExperience(), is(start));
     assertThat("Experience calculation must match given", Experience.getExp(player), is(start));
 
     Experience.changeExp(player, change);
@@ -102,20 +116,13 @@ class ExperienceTest {
     Experience.changeExp(player, -change);
 
     assertThat("Reverted experience calculation must match", Experience.getExp(player), is(start));
-
   }
 
   private Stream<Arguments> getChanges() {
-    // Matrix [0 to 10][-10 to 2000]
+    // Matrix [0 to 10][-10 to 1000]
     return IntStream.rangeClosed(0, 10).mapToObj(startVal ->
-            IntStream.rangeClosed(-10, 2000).mapToObj(changeVal ->
+            IntStream.rangeClosed(-10, 1000).mapToObj(changeVal ->
                 Arguments.of(startVal, changeVal)))
         .flatMap(Function.identity());
   }
-
-  @AfterAll
-  void afterAll() {
-    MockBukkit.unmock();
-  }
-
 }
