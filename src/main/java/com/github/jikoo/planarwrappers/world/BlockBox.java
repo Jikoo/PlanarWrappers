@@ -756,10 +756,9 @@ public class BlockBox implements Cloneable {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof BlockBox)) {
+    if (!(o instanceof BlockBox other)) {
       return false;
     }
-    BlockBox other = (BlockBox) o;
     return this.minX == other.minX
         && this.minY == other.minY
         && this.minZ == other.minZ

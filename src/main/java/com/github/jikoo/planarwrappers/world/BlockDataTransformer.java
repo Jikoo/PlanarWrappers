@@ -1,6 +1,7 @@
 package com.github.jikoo.planarwrappers.world;
 
 import org.bukkit.block.data.BlockData;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An interface defining behavior for a {@link BlockData} transformer.
@@ -14,5 +15,5 @@ public interface BlockDataTransformer {
    * @param rotation the new orientation
    * @return true if the {@code BlockData} was affected
    */
-  boolean transform(BlockData blockData, Direction rotation);
+  boolean transform(@NotNull BlockData blockData, @NotNull Direction rotation);
 }

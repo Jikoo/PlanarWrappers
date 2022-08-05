@@ -20,7 +20,7 @@ public abstract class SingleTransformer<T extends BlockData> implements BlockDat
   }
 
   @Override
-  public boolean transform(BlockData blockData, Direction rotation) {
+  public boolean transform(@NotNull BlockData blockData, @NotNull Direction rotation) {
     return Generics.consumeAs(
         clazz,
         blockData,
@@ -28,5 +28,5 @@ public abstract class SingleTransformer<T extends BlockData> implements BlockDat
     );
   }
 
-  protected abstract void setData(T data, Direction rotated);
+  protected abstract void setData(@NotNull T data, @NotNull Direction rotated);
 }

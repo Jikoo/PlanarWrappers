@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +34,7 @@ public class TransformableBlockData {
     return this;
   }
 
+  @Contract("_ -> new")
   public @NotNull BlockData getTransformedData(@NotNull Direction direction) {
     if (this.transformers == null) {
       return this.blockData;

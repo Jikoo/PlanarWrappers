@@ -29,5 +29,5 @@ public abstract class MultipleTransformer<T extends BlockData> implements BlockD
         data -> faces.forEach(direction -> setData(data, direction.getRelativeDirection(rotation))));
   }
 
-  protected abstract void setData(T data, Direction rotated);
+  protected abstract void setData(@NotNull T data, @NotNull Direction rotated);
 }

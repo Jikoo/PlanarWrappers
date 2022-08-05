@@ -50,7 +50,7 @@ public enum Direction {
    * @param player the {@link Player}
    * @return the {@code Direction}
    */
-  public static Direction getFacingDirection(Player player) {
+  public static @NotNull Direction getFacingDirection(@NotNull Player player) {
     return getFacingDirection(player.getLocation());
   }
 
@@ -60,24 +60,19 @@ public enum Direction {
    * @param location the {@link Location}
    * @return the {@code Direction}
    */
-  public static Direction getFacingDirection(Location location) {
+  public static @NotNull Direction getFacingDirection(@NotNull Location location) {
     // Divide by 90 degree increments (360 degrees / 4 segments)
     float yaw = location.getYaw() / 90;
     // Round using Bukkit's negative-coordinate-safe utility.
     // Mask with 11 in binary, 3, to ignore insignificant over/underflow
     // Similar to %= 4 but handles negatives properly.
     byte facing = (byte) (NumberConversions.round(yaw) & 0b11);
-    switch (facing) {
-      case 0:
-        return SOUTH;
-      case 1:
-        return WEST;
-      case 3:
-        return EAST;
-      case 2:
-      default:
-        return NORTH;
-    }
+    return switch (facing) {
+      case 0 -> SOUTH;
+      case 1 -> WEST;
+      case 3 -> EAST;
+      default -> NORTH;
+    };
   }
 
   /**
@@ -86,7 +81,7 @@ public enum Direction {
    * @param directionName the name of the direction
    * @return the value or {@code NORTH} if the direction cannot be parsed
    */
-  public static Direction safeValue(@Nullable String directionName) {
+  public static @NotNull Direction safeValue(@Nullable String directionName) {
     if (directionName == null) {
       return NORTH;
     }
@@ -102,18 +97,13 @@ public enum Direction {
    *
    * @return the {@code BlockFace}
    */
-  public BlockFace toBlockFace() {
-    switch (this) {
-      case EAST:
-        return BlockFace.EAST;
-      case SOUTH:
-        return BlockFace.SOUTH;
-      case WEST:
-        return BlockFace.WEST;
-      case NORTH:
-      default:
-        return BlockFace.NORTH;
-    }
+  public @NotNull BlockFace toBlockFace() {
+    return switch (this) {
+      case EAST -> BlockFace.EAST;
+      case SOUTH -> BlockFace.SOUTH;
+      case WEST -> BlockFace.WEST;
+      case NORTH -> BlockFace.NORTH;
+    };
   }
 
   /**
@@ -121,16 +111,11 @@ public enum Direction {
    *
    * @return the {@code Axis}
    */
-  public Axis toAxis() {
-    switch (this) {
-      case EAST:
-      case WEST:
-        return Axis.X;
-      case NORTH:
-      case SOUTH:
-      default:
-        return Axis.Z;
-    }
+  public @NotNull Axis toAxis() {
+    return switch (this) {
+      case EAST, WEST -> Axis.X;
+      case SOUTH, NORTH -> Axis.Z;
+    };
   }
 
   /**
@@ -145,7 +130,7 @@ public enum Direction {
    *
    * @param direction the {@code Direction}
    */
-  public Direction getRelativeDirection(Direction direction) {
+  public @NotNull Direction getRelativeDirection(@NotNull Direction direction) {
     return values()[(this.ordinal() + direction.ordinal()) % 4];
   }
 
@@ -155,28 +140,31 @@ public enum Direction {
    * @param vector the Vector to translate
    * @return the new Vector
    */
-  public Vector getRelativeVector(@NotNull Vector vector) {
+  public @NotNull Vector getRelativeVector(@NotNull Vector vector) {
     vector = vector.clone();
     switch (this) {
-      case EAST:
+      case EAST -> {
         double newZ = vector.getX();
         vector.setX(vector.getZ());
         vector.setZ(newZ);
         return vector;
-      case SOUTH:
+      }
+      case SOUTH -> {
         vector.setX(-2 * vector.getBlockX() + vector.getX());
         int blockZ = (int) vector.getZ();
         vector.setZ(blockZ + vector.getZ() - blockZ);
         return vector;
-      case WEST:
+      }
+      case WEST -> {
         double newZ1 = -2 * vector.getBlockX() + vector.getX();
         vector.setX(-2 * vector.getBlockZ() + vector.getZ());
         vector.setZ(newZ1);
         return vector;
-      case NORTH:
-      default:
+      }
+      default -> {
         vector.setZ(-2 * vector.getBlockZ() + vector.getZ());
         return vector;
+      }
     }
   }
 }

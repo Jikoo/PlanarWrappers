@@ -234,15 +234,7 @@ public class BlockMap<V> {
     return entries;
   }
 
-  static class BlockMapEntry<V> implements Entry<Block, V> {
-
-    private final Block key;
-    private final V value;
-
-    BlockMapEntry(Block key, V value) {
-      this.key = key;
-      this.value = value;
-    }
+  record BlockMapEntry<V>(Block key, V value) implements Entry<Block, V> {
 
     @Override
     public Block getKey() {
@@ -261,10 +253,9 @@ public class BlockMap<V> {
 
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof Map.Entry)) {
+      if (!(obj instanceof Entry<?, ?> other)) {
         return false;
       }
-      Entry<?, ?> other = (Entry<?, ?>) obj;
       return key.equals(other.getKey()) && value.equals(other.getValue());
     }
 

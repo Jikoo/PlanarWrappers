@@ -73,10 +73,9 @@ public class Pair<L, R> {
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof Pair)) {
+    if (!(obj instanceof Pair<?, ?> other)) {
       return false;
     }
-    Pair<?, ?> other = (Pair<?, ?>) obj;
     return left.equals(other.left) && right.equals(other.right);
   }
 }

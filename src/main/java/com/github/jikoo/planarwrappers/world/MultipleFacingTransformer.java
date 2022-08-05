@@ -16,7 +16,7 @@ public class MultipleFacingTransformer extends MultipleTransformer<MultipleFacin
   }
 
   @Override
-  protected void setData(MultipleFacing data, Direction rotated) {
+  protected void setData(@NotNull MultipleFacing data, @NotNull Direction rotated) {
     BlockFace face = rotated.toBlockFace();
     if (data.getAllowedFaces().contains(face)) {
       data.setFace(face, true);

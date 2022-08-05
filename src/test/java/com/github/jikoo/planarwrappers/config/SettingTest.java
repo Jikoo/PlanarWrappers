@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -186,8 +185,8 @@ class SettingTest {
     YamlConfiguration configuration =
         getConfiguration(
             path,
-            setDefault.stream().map(Material::name).collect(Collectors.toList()),
-            override.stream().map(Material::name).collect(Collectors.toList()));
+            setDefault.stream().map(Material::name).toList(),
+            override.stream().map(Material::name).toList());
     SimpleSetSetting<Material> setting =
         new SimpleSetSetting<>(configuration, path, internalDefault) {
           @Override
@@ -211,8 +210,8 @@ class SettingTest {
             Stream.concat(
                     setDefault.stream().map(Material::name),
                     Stream.of("#wall_signs", "#3badnamespace", "#not_a_real_tag"))
-                .collect(Collectors.toList()),
-            override.stream().map(Material::name).collect(Collectors.toList()));
+                .toList(),
+            override.stream().map(Material::name).toList());
     SimpleSetSetting<Material> setting =
         new MaterialSetSetting(configuration, path, internalDefault);
 
@@ -292,7 +291,7 @@ class SettingTest {
           mapping.getValue().stream()
               .filter(Objects::nonNull)
               .map(SettingTest::translate)
-              .collect(Collectors.toList()));
+              .toList());
     }
   }
 

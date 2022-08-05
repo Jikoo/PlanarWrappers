@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -73,7 +74,8 @@ public class Shape {
    * @param direction the Direction the Shape should be rotated
    * @return the Blocks and relative BlockData
    */
-  public Map<Block, BlockData> getBuildLocations(@NotNull Block key, @NotNull Direction direction) {
+  @Contract("_, _ -> new")
+  public @NotNull Map<Block, BlockData> getBuildLocations(@NotNull Block key, @NotNull Direction direction) {
     Map<Block, BlockData> newLocs = new HashMap<>();
     for (Entry<Vector, TransformableBlockData> entry : vectorData.entrySet()) {
       Vector relativeVector = direction.getRelativeVector(entry.getKey());

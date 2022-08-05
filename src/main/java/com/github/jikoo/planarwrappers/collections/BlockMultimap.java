@@ -6,11 +6,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 /**
  * A more performant expression of a {@code Map<Block, <List<V>>}. Also supports chunk-based
@@ -45,7 +45,7 @@ public class BlockMultimap<V> {
    * @param block the key used to map the value
    * @return the values stored using the key, or {@code null} if no values have been set
    */
-  public @Nullable Collection<V> get(@NotNull Block block) {
+  public @Nullable @Unmodifiable Collection<V> get(@NotNull Block block) {
     List<V> list = blockMap.get(block);
     if (list == null) {
       return null;
@@ -61,7 +61,7 @@ public class BlockMultimap<V> {
    * @param chunk the chunk of block keys
    * @return the values associated with the keys
    */
-  public @NotNull Collection<V> get(@NotNull Chunk chunk) {
+  public @NotNull @Unmodifiable Collection<V> get(@NotNull Chunk chunk) {
     return get(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
   }
 
@@ -75,11 +75,9 @@ public class BlockMultimap<V> {
    * @param chunkZ the chunk Z coordinate
    * @return the values associated with the keys
    */
-  public @NotNull Collection<V> get(@NotNull String world, int chunkX, int chunkZ) {
-    return Collections.unmodifiableCollection(
-        blockMap.get(world, chunkX, chunkZ).stream()
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList()));
+  public @NotNull @Unmodifiable Collection<V> get(@NotNull String world, int chunkX, int chunkZ) {
+    return blockMap.get(world, chunkX, chunkZ).stream()
+        .flatMap(Collection::stream).toList();
   }
 
   /**
@@ -90,7 +88,7 @@ public class BlockMultimap<V> {
    * @param block the key used to map the value
    * @return the values stored using the key, or {@code null} if no values have been set
    */
-  public @Nullable Collection<V> remove(@NotNull Block block) {
+  public @Nullable @Unmodifiable Collection<V> remove(@NotNull Block block) {
     List<V> list = blockMap.remove(block);
     if (list == null) {
       return null;
@@ -106,7 +104,7 @@ public class BlockMultimap<V> {
    * @param chunk the chunk of block keys
    * @return the values associated with the keys
    */
-  public @NotNull Collection<V> remove(@NotNull Chunk chunk) {
+  public @NotNull @Unmodifiable Collection<V> remove(@NotNull Chunk chunk) {
     return remove(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
   }
 
@@ -120,20 +118,25 @@ public class BlockMultimap<V> {
    * @param chunkZ the chunk Z coordinate
    * @return the values associated with the keys
    */
-  public @NotNull Collection<V> remove(@NotNull String world, int chunkX, int chunkZ) {
-    return Collections.unmodifiableCollection(
-        blockMap.remove(world, chunkX, chunkZ).stream()
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList()));
+  public @NotNull @Unmodifiable Collection<V> remove(@NotNull String world, int chunkX, int chunkZ) {
+    return blockMap.remove(world, chunkX, chunkZ).stream()
+        .flatMap(Collection::stream)
+        .toList();
   }
 
-  public Collection<Map.Entry<Block, Collection<V>>> entrySet() {
-    return Collections.unmodifiableCollection(
-        blockMap.entrySet().stream()
-            .map(
-                entry ->
+  /**
+   * Get an immutable collection of all mappings.
+   *
+   * @return all mappings
+   */
+  public @NotNull @Unmodifiable Collection<Map.Entry<Block, Collection<V>>> entrySet() {
+    return blockMap.entrySet().stream()
+        .map(
+            entry ->
+                (Map.Entry<Block, Collection<V>>)
                     new BlockMapEntry<>(
-                        entry.getKey(), Collections.unmodifiableCollection(entry.getValue())))
-            .collect(Collectors.toList()));
+                    entry.getKey(),
+                        Collections.unmodifiableCollection(entry.getValue())))
+        .toList();
   }
 }

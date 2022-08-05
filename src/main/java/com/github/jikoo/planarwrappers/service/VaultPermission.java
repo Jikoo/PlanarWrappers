@@ -60,24 +60,11 @@ public class VaultPermission extends ManagerProvidedService<net.milkbowl.vault.p
     return defaultPerms.hasPermission(permission);
   }
 
-  static final class FrozenServerOp implements ServerOperator {
-
-    private final boolean isOp;
-
-    FrozenServerOp(boolean isOp) {
-      this.isOp = isOp;
-    }
-
+  record FrozenServerOp(boolean isOp) implements ServerOperator {
     @Override
-    public boolean isOp() {
-      return this.isOp;
+      public void setOp(boolean value) {
+        throw new UnsupportedOperationException("FrozenServerOp cannot change operator state");
+      }
     }
-
-    @Override
-    public void setOp(boolean value) {
-      throw new UnsupportedOperationException("FrozenServerOp cannot change operator state");
-    }
-
-  }
 
 }

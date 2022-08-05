@@ -11,6 +11,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.block.BlockMock;
 import com.github.jikoo.planarwrappers.tuple.Pair;
@@ -26,6 +27,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,24 +44,24 @@ class BlockMultimapTest {
 
   @BeforeAll
   void beforeAll() {
-    MockBukkit.mock();
+    ServerMock server = MockBukkit.mock();
 
     WorldMock world =
         new WorldMock() {
           @Override
-          public Chunk getChunkAt(Block block) {
+          public @NotNull Chunk getChunkAt(Block block) {
             return getChunkAt(Coords.blockToChunk(block.getX()), Coords.blockToChunk(block.getZ()));
           }
 
           @Override
-          public Chunk getChunkAt(Location location) {
+          public @NotNull Chunk getChunkAt(Location location) {
             return getChunkAt(
                 Coords.blockToChunk(location.getBlockX()),
                 Coords.blockToChunk(location.getBlockZ()));
           }
         };
     world.setName("world");
-    MockBukkit.getMock().addWorld(world);
+    server.addWorld(world);
 
     this.world = world;
   }
