@@ -38,7 +38,7 @@ public final class WeightedRandom {
         "Generated an index out of bounds with " + random.getClass().getName());
   }
 
-  private static int sum(Collection<? extends Choice> choices) {
+  private static int sum(@NotNull Collection<? extends Choice> choices) {
     return choices.stream().mapToInt(Choice::getWeight).sum();
   }
 

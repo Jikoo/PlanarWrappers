@@ -9,22 +9,22 @@ import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.WorldMock;
-import be.seeseemelk.mockbukkit.block.BlockMock;
 import com.github.jikoo.planarwrappers.collections.BlockMap.BlockMapEntry;
-import com.github.jikoo.planarwrappers.util.Coords;
+import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.world.BlockMocks;
+import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,26 +40,11 @@ class BlockMapTest {
 
   @BeforeAll
   void beforeAll() {
-    MockBukkit.mock();
-
-    WorldMock world =
-        new WorldMock() {
-          @Override
-          public Chunk getChunkAt(Block block) {
-            return getChunkAt(Coords.blockToChunk(block.getX()), Coords.blockToChunk(block.getZ()));
-          }
-
-          @Override
-          public Chunk getChunkAt(Location location) {
-            return getChunkAt(
-                Coords.blockToChunk(location.getBlockX()),
-                Coords.blockToChunk(location.getBlockZ()));
-          }
-        };
-    world.setName("world");
-    MockBukkit.getMock().addWorld(world);
-
-    this.world = world;
+    String worldName = "world";
+    world = WorldMocks.newWorld(worldName);
+    Server server = BukkitServer.newServer();
+    when(server.getWorld(worldName)).thenReturn(world);
+    Bukkit.setServer(server);
   }
 
   @BeforeEach
@@ -70,7 +55,7 @@ class BlockMapTest {
   @DisplayName("Map should support standard manipulation operations")
   @Test
   void testManipulate() {
-    Block block = new BlockMock(new Location(world, 0, 0, 0));
+    Block block = BlockMocks.newBlock(world, 0, 0, 0);
     Object object1 = "An object";
     Object object2 = "A different object";
 
@@ -151,8 +136,4 @@ class BlockMapTest {
     assertThrows(UnsupportedOperationException.class, () -> entry.setValue("new value"));
   }
 
-  @AfterAll
-  void afterAll() {
-    MockBukkit.unmock();
-  }
 }

@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.mock.BukkitHelper;
+import com.github.jikoo.planarwrappers.mock.BukkitServer;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -57,7 +57,7 @@ class ManagerProvidedServiceTest {
 
   @AfterEach
   void afterEach() {
-    BukkitHelper.unsetBukkitServer();
+    BukkitServer.unsetBukkitServer();
   }
 
   @DisplayName("Hook must not report unusable registration as present")

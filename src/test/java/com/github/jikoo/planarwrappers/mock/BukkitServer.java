@@ -1,9 +1,24 @@
 package com.github.jikoo.planarwrappers.mock;
 
-import java.lang.reflect.Field;
-import org.bukkit.Bukkit;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public final class BukkitHelper {
+import java.lang.reflect.Field;
+import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.jetbrains.annotations.NotNull;
+
+public final class BukkitServer {
+
+  public static @NotNull Server newServer() {
+    Server mock = mock(Server.class);
+
+    Logger noOp = mock(Logger.class);
+    when(mock.getLogger()).thenReturn(noOp);
+
+    return mock;
+  }
 
   public static void unsetBukkitServer() {
     try
@@ -18,6 +33,6 @@ public final class BukkitHelper {
     }
   }
 
-  private BukkitHelper() {}
+  private BukkitServer() {}
 
 }

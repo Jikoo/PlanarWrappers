@@ -40,6 +40,8 @@ public final class BlockMocks {
       return parameter;
     });
 
+    when(mock.getChunk()).thenAnswer(invocation -> world.getChunkAt(mock));
+
     mockType(mock);
     mockRelative(mock);
 
