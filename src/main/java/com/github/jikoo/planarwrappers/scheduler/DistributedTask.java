@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.collections;
+package com.github.jikoo.planarwrappers.scheduler;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -44,9 +44,9 @@ public class DistributedTask<T> {
       long period,
       @NotNull TimeUnit periodUnit,
       @NotNull Consumer<@UnmodifiableView Collection<T>> consumer) {
-    int totalTicks = (int) (TimeUnit.MILLISECONDS.convert(period, periodUnit) / 50);
+    int totalTicks = (int) TickTimeUnit.toTicks(period, periodUnit);
     if (totalTicks < 2) {
-      throw new IllegalArgumentException("Period must be 2 ticks (100 MS) or greater");
+      throw new IllegalArgumentException("Period must be 2 ticks or greater");
     }
 
     distributedContent = (Set<T>[]) Array.newInstance(allContent.getClass(), totalTicks);
