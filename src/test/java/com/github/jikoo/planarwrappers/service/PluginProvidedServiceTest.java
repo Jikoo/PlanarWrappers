@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.plugin.PluginManagerMock;
 import java.io.File;
 import org.bukkit.event.server.PluginEnableEvent;
@@ -26,17 +27,18 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 @TestInstance(Lifecycle.PER_METHOD)
 class PluginProvidedServiceTest {
 
+  ServerMock server;
   Plugin plugin;
 
   @BeforeEach
   void beforeEach() {
-    MockBukkit.mock();
+    server = MockBukkit.mock();
     plugin = MockBukkit.createMockPlugin("PluginServiceConsumer");
   }
 
   @AfterEach
   void afterEach() {
-    MockBukkit.getMock().getPluginManager().clearPlugins();
+    server.getPluginManager().clearPlugins();
     MockBukkit.unmock();
   }
 
@@ -91,14 +93,15 @@ class PluginProvidedServiceTest {
     assertThat("Service is present after registration", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
 
-    MockBukkit.getMock().getPluginManager().disablePlugin(registrant);
+    server.getPluginManager().disablePlugin(registrant);
+    server.getScheduler().performOneTick();
     assertThat("Service is not present after unregister", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
   }
 
   @Contract(" -> new")
   private @NotNull Plugin addRegistrant() {
-    PluginManagerMock pluginManager = MockBukkit.getMock().getPluginManager();
+    PluginManagerMock pluginManager = server.getPluginManager();
     Plugin registrant = pluginManager.loadPlugin(
         RegistrantPlugin.class,
         new PluginDescriptionFile(
@@ -111,7 +114,7 @@ class PluginProvidedServiceTest {
 
   @Contract(" -> new")
   private @NotNull ProvidedService<RegistrantPlugin> getService() {
-    return new PluginProvidedService<RegistrantPlugin>(plugin){};
+    return new PluginProvidedService<>(plugin){};
   }
 
   private static class RegistrantPlugin extends JavaPlugin {

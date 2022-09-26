@@ -20,7 +20,10 @@ public abstract class PluginProvidedService<T extends JavaPlugin> extends Provid
     super(plugin);
 
     Event.register(PluginEnableEvent.class, this::handlePlugin, plugin);
-    Event.register(PluginDisableEvent.class, this::handlePlugin, plugin);
+    Event.register(
+        PluginDisableEvent.class,
+        event -> plugin.getServer().getScheduler().runTask(plugin, () -> handlePlugin(event)),
+        plugin);
   }
 
   @Override
