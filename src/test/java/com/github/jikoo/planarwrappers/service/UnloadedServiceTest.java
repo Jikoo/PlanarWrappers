@@ -31,7 +31,7 @@ class UnloadedServiceTest {
   @Test
   void testUnloadedService() {
     Plugin plugin = MockBukkit.createMockPlugin("ServiceConsumer");
-    TestProvidedService<UnloadedService> service = new TestProvidedService<UnloadedService>(plugin) {};
+    TestProvidedService<UnloadedService> service = new TestProvidedService<>(plugin) {};
     assertThat("Unknown service is not present", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
 

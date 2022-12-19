@@ -35,7 +35,7 @@ class ProvidedServiceTest {
   @DisplayName("Hook must report itself absent when no registration is present")
   @Test
   void testNoRegistration() {
-    ProvidedService<Object> service = new TestProvidedService<Object>(plugin) {};
+    ProvidedService<Object> service = new TestProvidedService<>(plugin) {};
     assertThat("Service with no registration is not present", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
   }
@@ -43,7 +43,7 @@ class ProvidedServiceTest {
   @DisplayName("Hook must report itself present if a registration was added prior to usage")
   @Test
   void testEarlyRegistration() {
-    ProvidedService<Object> service = new TestProvidedService<Object>(plugin, "Hello world") {};
+    ProvidedService<Object> service = new TestProvidedService<>(plugin, "Hello world") {};
     assertThat("Service is present", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
   }
@@ -51,7 +51,7 @@ class ProvidedServiceTest {
   @DisplayName("Hook must still be usable after redundant registrations")
   @Test
   void testReregistration() {
-    TestProvidedService<Object> service = new TestProvidedService<Object>(plugin, "Hello world") {};
+    TestProvidedService<Object> service = new TestProvidedService<>(plugin, "Hello world") {};
     assertThat("Service is present", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
 
@@ -63,7 +63,7 @@ class ProvidedServiceTest {
   @DisplayName("Hook must support late registration")
   @Test
   void testLateRegistration() {
-    TestProvidedService<Object> service = new TestProvidedService<Object>(plugin) {};
+    TestProvidedService<Object> service = new TestProvidedService<>(plugin) {};
     assertThat("Service with no registration is not present", service.isPresent(), is(false));
     assertThat("Wrapper is null", service.getService(), is(nullValue()));
 
@@ -75,7 +75,7 @@ class ProvidedServiceTest {
   @DisplayName("Hook must support deregistration")
   @Test
   void testRemoveRegistration() {
-    TestProvidedService<Object> service = new TestProvidedService<Object>(plugin, "Hello world") {};
+    TestProvidedService<Object> service = new TestProvidedService<>(plugin, "Hello world") {};
     assertThat("Service is present after registration", service.isPresent());
     assertThat("Wrapper is not null", service.getService(), is(notNullValue()));
 
@@ -87,7 +87,7 @@ class ProvidedServiceTest {
   @DisplayName("Hook must reify provider class")
   @Test
   void testReifiedServiceClass() {
-    TestProvidedService<String> service = new TestProvidedService<String>(plugin) {};
+    TestProvidedService<String> service = new TestProvidedService<>(plugin) {};
     assertThat("Service class is reified", service.getServiceClass(), is(String.class));
   }
 

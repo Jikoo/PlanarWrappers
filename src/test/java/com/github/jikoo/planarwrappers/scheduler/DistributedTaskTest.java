@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.collections;
+package com.github.jikoo.planarwrappers.scheduler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -15,7 +15,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.scheduler.DistributedTask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
