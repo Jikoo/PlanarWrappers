@@ -37,7 +37,9 @@ class CachingSupplierTest {
   @Test
   void testCachedValueUsed() {
     Supplier<Boolean> singleUseSupplier = new SingleUseSupplier<>(true);
-    Supplier<Boolean> cache = new CachingSupplier<>(singleUseSupplier, 5, TimeUnit.MILLISECONDS);
+    Clock clock = mock(Clock.class);
+    when(clock.millis()).thenReturn(0L);
+    Supplier<Boolean> cache = new CachingSupplier<>(singleUseSupplier, 5, TimeUnit.MILLISECONDS, clock);
 
     assertThat("Value must be supplied as expected", cache.get());
     assertThrows(
