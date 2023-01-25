@@ -9,13 +9,11 @@ import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.when;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.WorldMock;
-import be.seeseemelk.mockbukkit.block.BlockMock;
+import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
 import com.github.jikoo.planarwrappers.tuple.Pair;
-import com.github.jikoo.planarwrappers.util.Coords;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
@@ -23,11 +21,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,26 +42,20 @@ class BlockMultimapTest {
 
   @BeforeAll
   void beforeAll() {
-    ServerMock server = MockBukkit.mock();
+    Server server = BukkitServer.newServer();
+    Bukkit.setServer(server);
+    when(server.getWorld("world")).thenAnswer(invocation -> this.world);
+    this.world = WorldMocks.newWorld("world");
+  }
 
-    WorldMock world =
-        new WorldMock() {
-          @Override
-          public @NotNull Chunk getChunkAt(Block block) {
-            return getChunkAt(Coords.blockToChunk(block.getX()), Coords.blockToChunk(block.getZ()));
-          }
+  @BeforeEach
+  void beforeEach() {
+    blockMultimap = new BlockMultimap<>();
+  }
 
-          @Override
-          public @NotNull Chunk getChunkAt(Location location) {
-            return getChunkAt(
-                Coords.blockToChunk(location.getBlockX()),
-                Coords.blockToChunk(location.getBlockZ()));
-          }
-        };
-    world.setName("world");
-    server.addWorld(world);
-
-    this.world = world;
+  @AfterAll
+  void afterAll() {
+    BukkitServer.unsetBukkitServer();
   }
 
   @DisplayName("Map entry set should contain expected content.")
@@ -99,7 +91,7 @@ class BlockMultimapTest {
   @DisplayName("Map should support standard manipulation operations")
   @Test
   void testManipulate() {
-    Block block = new BlockMock(new Location(world, 0, 0, 0));
+    Block block = world.getBlockAt(0, 0, 0);
     Object object1 = "An object";
     Object object2 = "A different object";
 
@@ -149,13 +141,4 @@ class BlockMultimapTest {
     assertThat("Block data should not be set after removal", blockMultimap.get(chunk), empty());
   }
 
-  @BeforeEach
-  void beforeEach() {
-    blockMultimap = new BlockMultimap<>();
-  }
-
-  @AfterAll
-  void afterAll() {
-    MockBukkit.unmock();
-  }
 }

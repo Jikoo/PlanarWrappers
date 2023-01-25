@@ -5,9 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
 import com.github.jikoo.planarwrappers.function.TriConsumer;
+import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +18,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,8 +34,7 @@ class BlockBoxTest {
 
   @BeforeAll
   void beforeAll() {
-    ServerMock mock = MockBukkit.mock();
-    world = mock.addSimpleWorld("world");
+    this.world = WorldMocks.newWorld("world");
   }
 
   @DisplayName("Bounding box must produce expected min/max values.")
@@ -385,8 +382,4 @@ class BlockBoxTest {
         });
   }
 
-  @AfterAll
-  void afterAll() {
-    MockBukkit.unmock();
-  }
 }
