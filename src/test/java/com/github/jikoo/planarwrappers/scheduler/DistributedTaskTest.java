@@ -6,14 +6,16 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,14 +29,14 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.stubbing.Answer;
+import org.mockito.ArgumentCaptor;
 
 @TestInstance(Lifecycle.PER_CLASS)
 class DistributedTaskTest {
@@ -42,31 +44,30 @@ class DistributedTaskTest {
   private static final int TASK_BUCKETS = 5;
 
   Plugin plugin;
-  Runnable runTask;
+  ArgumentCaptor<Runnable> runnableCaptor;
+  ArgumentCaptor<Long> delay;
+  ArgumentCaptor<Long> period;
 
   @BeforeAll
   void beforeAll() {
     plugin = mock(Plugin.class);
+  }
+
+  @BeforeEach
+  void beforeEach() {
+    runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+    delay = ArgumentCaptor.forClass(Long.class);
+    period = ArgumentCaptor.forClass(Long.class);
 
     // Set up scheduler mock to pull DistributedTask#run as a runnable.
     BukkitScheduler scheduler = mock(BukkitScheduler.class);
-    when(scheduler.scheduleSyncRepeatingTask(any(), any(Runnable.class), anyLong(), anyLong()))
-        .thenAnswer((Answer<Integer>) invocation -> {
-          runTask = invocation.getArgument(1);
-          return 2;
-        });
-    doNothing().when(scheduler).cancelTask(anyInt());
+    doAnswer(invocation -> 2)
+        .when(scheduler)
+        .scheduleSyncRepeatingTask(any(), runnableCaptor.capture(), delay.capture(), period.capture());
 
     Server server = mock(Server.class);
     doReturn(scheduler).when(server).getScheduler();
-
     doReturn(server).when(plugin).getServer();
-  }
-
-  @AfterEach
-  void afterEach() {
-    //noinspection ConstantConditions
-    runTask = null;
   }
 
   @Contract("_ -> new")
@@ -80,8 +81,9 @@ class DistributedTaskTest {
   }
 
   private void tickAllBuckets() {
+    Runnable runnable = runnableCaptor.getValue();
     for (int i = 0; i < TASK_BUCKETS; ++i) {
-      runTask.run();
+      runnable.run();
     }
   }
 
@@ -141,7 +143,6 @@ class DistributedTaskTest {
     tickAllBuckets();
 
     assertThat(handledObjects, hasSize(0));
-
   }
 
   @ParameterizedTest
@@ -194,21 +195,39 @@ class DistributedTaskTest {
 
   @Test
   void testUnscheduledCancel() {
-    new DistributedTask<>(100, TimeUnit.MILLISECONDS, ignored -> {}).cancel(plugin);
+    DistributedTask<Object> unscheduledTask = new DistributedTask<>(100, TimeUnit.MILLISECONDS, ignored -> {});
+    assertThat("No task scheduled", runnableCaptor.getAllValues().isEmpty());
+    assertDoesNotThrow(() -> unscheduledTask.cancel(plugin));
   }
 
   @Test
   void testScheduleCancel() {
     DistributedTask<Object> task = new DistributedTask<>(100, TimeUnit.MILLISECONDS, ignored -> {});
-    task.schedule(plugin);
-    task.cancel(plugin);
+    assertThat("No task scheduled", runnableCaptor.getAllValues().isEmpty());
+    assertDoesNotThrow(() -> task.schedule(plugin));
+    assertThat("One task scheduled", runnableCaptor.getAllValues(), hasSize(1));
+    assertDoesNotThrow(() -> task.cancel(plugin));
   }
 
   @Test
   void testDuplicateSchedule() {
     DistributedTask<Object> task = new DistributedTask<>(100, TimeUnit.MILLISECONDS, ignored -> {});
-    task.schedule(plugin);
-    task.schedule(plugin);
+    BukkitScheduler scheduler = plugin.getServer().getScheduler();
+
+    verify(scheduler, times(0))
+        .scheduleSyncRepeatingTask(any(Plugin.class), any(Runnable.class), anyLong(), anyLong());
+
+    assertDoesNotThrow(() -> task.schedule(plugin));
+
+    verify(scheduler)
+        .scheduleSyncRepeatingTask(any(Plugin.class), any(Runnable.class), anyLong(), anyLong());
+    verify(scheduler, times(0)).cancelTask(anyInt());
+
+    assertDoesNotThrow(() -> task.schedule(plugin));
+
+    verify(scheduler, times(2))
+        .scheduleSyncRepeatingTask(any(Plugin.class), any(Runnable.class), anyLong(), anyLong());
+    verify(scheduler).cancelTask(anyInt());
   }
 
 }
