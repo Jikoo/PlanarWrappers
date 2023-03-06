@@ -62,7 +62,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <version>3.0.0-M9</version>
         <configuration>
-          <!-- Github Actions offers 2 cores for Linux. Test stonks 📈 -->
+          <!-- GitHub Actions offers 2 cores for Linux. -->
           <forkCount>2</forkCount>
           <!-- Bukkit initializes so many static objects that we cannot reasonably reuse forks. -->
           <reuseForks>false</reuseForks>
@@ -194,6 +194,6 @@
     </repository>
   </repositories>
 
-  <version>3.0.0</version>
+  <version>3.0.1-SNAPSHOT</version>
 
 </project>
