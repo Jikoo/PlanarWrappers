@@ -5,11 +5,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.notNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.github.jikoo.planarwrappers.mock.BukkitServer;
 import com.github.jikoo.planarwrappers.mock.inventory.EnchantmentMocks;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -25,12 +24,11 @@ class StringConvertersTest {
 
   @BeforeAll
   void beforeAll() {
-    Server mock = mock(Server.class);
-    when(mock.getLogger()).thenReturn(Logger.getLogger("bukkit"));
-    when(mock.getRegistry(notNull())).thenReturn(null);
+    Server server = BukkitServer.newServer();
+    when(server.getRegistry(notNull())).thenReturn(null);
 
     EnchantmentMocks.setEnchantments();
-    Bukkit.setServer(mock);
+    Bukkit.setServer(server);
   }
 
   @Test

@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.notNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.github.jikoo.planarwrappers.config.impl.BooleanSetting;
@@ -21,6 +20,7 @@ import com.github.jikoo.planarwrappers.config.impl.MaterialSetting;
 import com.github.jikoo.planarwrappers.config.impl.StringSetting;
 import com.github.jikoo.planarwrappers.config.impl.VectorSetting;
 import com.github.jikoo.planarwrappers.function.TriFunction;
+import com.github.jikoo.planarwrappers.mock.BukkitServer;
 import com.github.jikoo.planarwrappers.util.StringConverters;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -65,10 +64,9 @@ class SettingTest {
 
   @BeforeAll
   void beforeAll() {
-    Server mock = mock(Server.class);
-    when(mock.getLogger()).thenReturn(Logger.getLogger("bukkit"));
-    when(mock.getRegistry(notNull())).thenReturn(null);
-    when(mock.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class))
+    Server server = BukkitServer.newServer();
+    when(server.getRegistry(notNull())).thenReturn(null);
+    when(server.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class))
         .thenReturn(new Tag<>() {
           private final Set<Material> materials = Set.of(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN);
           @Override
@@ -88,7 +86,7 @@ class SettingTest {
             return NamespacedKey.minecraft("wall_signs");
           }
         });
-    Bukkit.setServer(mock);
+    Bukkit.setServer(server);
   }
 
   private static final String INVALID_OVERRIDE = "%invalid%";

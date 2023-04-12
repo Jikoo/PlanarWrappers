@@ -4,15 +4,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.github.jikoo.planarwrappers.mock.BukkitServer;
 import com.github.jikoo.planarwrappers.mock.world.BlockDataMocks;
 import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
@@ -43,9 +42,8 @@ class ShapeTest {
 
   @BeforeAll
   void beforeAll() {
-    Server server = mock(Server.class);
+    Server server = BukkitServer.newServer();
     when(server.createBlockData(any(Material.class))).thenAnswer(parameters -> BlockDataMocks.newData(parameters.getArgument(0)));
-    when(server.getLogger()).thenReturn(Logger.getLogger("bukkit"));
     Bukkit.setServer(server);
     world = WorldMocks.newWorld("world");
   }

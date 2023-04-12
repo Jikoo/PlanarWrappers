@@ -37,18 +37,17 @@ class ManagerProvidedServiceTest {
   void beforeEach() {
     manager = new SimpleServicesManager();
 
-    Server server = mock(Server.class);
-    when(server.getLogger()).thenReturn(Logger.getLogger("Bukkit"));
+    Server server = BukkitServer.newServer();
     when(server.getServicesManager()).thenReturn(manager);
     when(server.getPluginManager()).thenReturn(new SimplePluginManager(server, new SimpleCommandMap(server)));
-    when(server.isPrimaryThread()).thenReturn(true);
     Bukkit.setServer(server);
 
     plugin = mock(Plugin.class);
     when(plugin.getName()).thenReturn("ManagerServiceConsumer");
     when(plugin.isEnabled()).thenReturn(true);
     when(plugin.getServer()).thenReturn(server);
-    when(plugin.getLogger()).thenReturn(Logger.getLogger("ManagerServiceConsumer"));
+    Logger logger = mock(Logger.class);
+    when(plugin.getLogger()).thenReturn(logger);
 
     registrant = mock(Plugin.class);
     when(registrant.getName()).thenReturn("Registrant");
