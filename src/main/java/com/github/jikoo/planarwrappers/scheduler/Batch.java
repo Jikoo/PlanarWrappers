@@ -18,7 +18,7 @@ import org.jetbrains.annotations.UnmodifiableView;
  */
 public abstract class Batch<T> {
 
-  private final @NotNull Set<T> batch = Collections.newSetFromMap(new ConcurrentHashMap<>());
+  private final @NotNull Set<T> elements = Collections.newSetFromMap(new ConcurrentHashMap<>());
   private final @NotNull AtomicReference<BukkitTask> task = new AtomicReference<>();
   final @NotNull Plugin plugin;
   final long gatherTicks;
@@ -32,12 +32,12 @@ public abstract class Batch<T> {
   }
 
   public void add(@NotNull T element) {
-    this.batch.add(element);
+    this.elements.add(element);
     this.trySchedule();
   }
 
   private void trySchedule() {
-    if (this.task.get() != null || this.batch.isEmpty()) {
+    if (this.task.get() != null || this.elements.isEmpty()) {
       return;
     }
 
@@ -48,8 +48,8 @@ public abstract class Batch<T> {
 
   private void run() {
     // Copy all elements to a new set, clearing original in the process.
-    Set<T> localBatch = new HashSet<>(this.batch.size());
-    this.batch.removeIf(element -> {
+    Set<T> localBatch = new HashSet<>(this.elements.size());
+    this.elements.removeIf(element -> {
       localBatch.add(element);
       return true;
     });
@@ -58,7 +58,7 @@ public abstract class Batch<T> {
     this.task.set(null);
 
     // Ensure we don't miss new elements added during time between clearing and unsetting.
-    if (!this.batch.isEmpty()) {
+    if (!this.elements.isEmpty()) {
       this.trySchedule();
     }
 
@@ -69,18 +69,18 @@ public abstract class Batch<T> {
   protected abstract void post(@NotNull @UnmodifiableView Set<T> batch);
 
   public void purge() {
-    if (batch.isEmpty()) {
+    if (elements.isEmpty()) {
       return;
     }
 
-    var batchCopy = Set.copyOf(this.batch);
-    this.task.getAndUpdate(task -> {
-      if (task != null && !task.isCancelled()) {
-        task.cancel();
+    var batchCopy = Set.copyOf(this.elements);
+    this.task.getAndUpdate(internalTask -> {
+      if (internalTask != null && !internalTask.isCancelled()) {
+        internalTask.cancel();
       }
       return null;
     });
-    this.batch.clear();
+    this.elements.clear();
 
     this.post(batchCopy);
   }
