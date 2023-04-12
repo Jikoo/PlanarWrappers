@@ -4,28 +4,36 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.entity.OfflinePlayerMock;
+import com.github.jikoo.planarwrappers.mock.BukkitServer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.ServicesManager;
+import org.bukkit.plugin.SimplePluginManager;
+import org.bukkit.plugin.SimpleServicesManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,41 +51,30 @@ class VaultEconomyTest {
   VaultEconomy econHook;
   OfflinePlayer player;
 
-  @BeforeAll
-  void beforeAll() {
-    MockBukkit.mock();
-    plugin = MockBukkit.createMockPlugin("VaultDependent");
-    econHook = new VaultEconomy(plugin) {
-      // Disable logging during tests to reduce clutter.
-      @Override
-      protected @Nullable Supplier<@NotNull String> logNoProviderRegistered(
-          @NotNull Class<Economy> clazz) {
-        return null;
-      }
+  @BeforeEach
+  void beforeEach() {
+    Server server = BukkitServer.newServer();
+    ServicesManager services = new SimpleServicesManager();
+    doReturn(services).when(server).getServicesManager();
+    PluginManager manager = new SimplePluginManager(server, new SimpleCommandMap(server));
+    doReturn(manager).when(server).getPluginManager();
 
-      @Override
-      protected @Nullable Supplier<@NotNull String> logServiceClassNotLoaded() {
-        return null;
-      }
+    plugin = mock(Plugin.class);
+    doReturn(server).when(plugin).getServer();
+    doReturn("VaultDependent").when(plugin).getName();
+    Logger logger = mock(Logger.class);
+    doReturn(logger).when(plugin).getLogger();
+    econHook = new VaultEconomy(plugin);
+    player = mock(OfflinePlayer.class);
+    doReturn(new UUID(0, 0)).when(player).getUniqueId();
+    doReturn("Player").when(player).getName();
 
-      @Override
-      protected @Nullable Supplier<String> logServiceProviderChange(
-          @NotNull Class<Economy> clazz,
-          @NotNull Economy instance) {
-        return null;
-      }
-    };
-    player = new OfflinePlayerMock("Player");
+    Bukkit.setServer(server);
   }
 
   @AfterEach
   void afterEach() {
-    MockBukkit.getMock().getServicesManager().unregisterAll(plugin);
-  }
-
-  @AfterAll
-  void tearDown() {
-    MockBukkit.unmock();
+    BukkitServer.unsetBukkitServer();
   }
 
   @Test

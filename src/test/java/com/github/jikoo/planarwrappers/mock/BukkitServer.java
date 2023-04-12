@@ -16,6 +16,7 @@ public final class BukkitServer {
 
     Logger noOp = mock(Logger.class);
     when(mock.getLogger()).thenReturn(noOp);
+    when(mock.isPrimaryThread()).thenReturn(true);
 
     return mock;
   }

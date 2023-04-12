@@ -5,10 +5,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
+import java.util.logging.Logger;
 import org.bukkit.plugin.Plugin;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,13 +24,9 @@ class ProvidedServiceTest {
 
   @BeforeEach
   void beforeEach() {
-    MockBukkit.mock();
-    plugin = MockBukkit.createMockPlugin("ServiceConsumer");
-  }
-
-  @AfterEach
-  void afterEach() {
-    MockBukkit.unmock();
+    plugin = mock(Plugin.class);
+    Logger logger = mock(Logger.class);
+    doReturn(logger).when(plugin).getLogger();
   }
 
   @DisplayName("Hook must report itself absent when no registration is present")

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <T> the type of plugin
  */
-public abstract class PluginProvidedService<T extends JavaPlugin> extends ProvidedService<T> {
+public abstract class PluginProvidedService<T extends Plugin> extends ProvidedService<T> {
 
   protected PluginProvidedService(@NotNull Plugin plugin) {
     super(plugin);
@@ -34,7 +34,8 @@ public abstract class PluginProvidedService<T extends JavaPlugin> extends Provid
         return clazz.cast(providingPlugin);
       }
     } catch (IllegalArgumentException | IllegalStateException e) {
-      // MockBukkit does not support JavaPlugin#getProvidingPlugin, does not use PluginClassLoader.
+      // Mocking static methods is annoying.
+      // It's safer and easier to have a fallback in case the provider Plugin is not a JavaPlugin.
       for (Plugin loaded : plugin.getServer().getPluginManager().getPlugins()) {
         if (loaded.isEnabled() && clazz.isInstance(loaded)) {
           return clazz.cast(loaded);

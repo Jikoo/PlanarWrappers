@@ -121,7 +121,7 @@
       <artifactId>junit-jupiter</artifactId>
       <groupId>org.junit.jupiter</groupId>
       <scope>test</scope>
-      <version>5.9.1</version>
+      <version>5.9.2</version>
     </dependency>
     <dependency>
       <artifactId>hamcrest</artifactId>
@@ -130,15 +130,9 @@
       <version>2.2</version>
     </dependency>
     <dependency>
-      <artifactId>MockBukkit-v1.19</artifactId>
-      <groupId>com.github.seeseemelk</groupId>
-      <scope>test</scope>
-      <version>2.145.1</version>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.2.0</version>
+      <version>5.3.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -174,6 +168,7 @@
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -182,11 +177,6 @@
     <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-    </repository>
-    <!-- Required for MockBukkit. -->
-    <repository>
-      <id>destroystokyo-repo</id>
-      <url>https://repo.destroystokyo.com/repository/maven-public/</url>
     </repository>
     <repository>
       <id>jitpack.io</id>

@@ -5,18 +5,23 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
+import com.github.jikoo.planarwrappers.mock.BukkitServer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.ServerEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.server.ServerLoadEvent.LoadType;
 import org.bukkit.plugin.Plugin;
-import org.junit.jupiter.api.AfterAll;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.SimplePluginManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,8 +35,8 @@ class EventTest {
 
   @BeforeAll
   void beforeAll() {
-    MockBukkit.mock();
-    plugin = MockBukkit.createMockPlugin();
+    plugin = mock(Plugin.class);
+    doReturn(true).when(plugin).isEnabled();
   }
 
   @Test
@@ -51,9 +56,11 @@ class EventTest {
         ServerCommandEvent.getHandlerList().getRegisteredListeners().length,
         greaterThan(0));
 
-    ServerMock server = MockBukkit.getMock();
-    ServerCommandEvent event = new ServerCommandEvent(server.getConsoleSender(), "example");
-    server.getPluginManager().callEvent(event);
+    Server server = BukkitServer.newServer();
+    CommandSender sender = mock(CommandSender.class);
+    ServerCommandEvent event = new ServerCommandEvent(sender, "example");
+    PluginManager manager = new SimplePluginManager(server, new SimpleCommandMap(server));
+    manager.callEvent(event);
 
     assertThat("Registered consumer must be called", hit.get());
   }
@@ -73,7 +80,9 @@ class EventTest {
         ServerCommandEvent.getHandlerList().getRegisteredListeners().length,
         is(1));
 
-    MockBukkit.getMock().getPluginManager().callEvent(new ServerLoadEvent(LoadType.RELOAD));
+    Server server = BukkitServer.newServer();
+    PluginManager manager = new SimplePluginManager(server, new SimpleCommandMap(server));
+    manager.callEvent(new ServerLoadEvent(LoadType.RELOAD));
 
     assertThat("First consumer must not be overridden", value.get(), is(0));
 
@@ -86,10 +95,5 @@ class EventTest {
 
     // Unregistering nonexistent key should not error.
     assertDoesNotThrow(() -> Event.unregister(clazz, key));
-  }
-
-  @AfterAll
-  void afterAll() {
-    MockBukkit.unmock();
   }
 }
