@@ -13,9 +13,11 @@ import org.jetbrains.annotations.NotNull;
  * A utility for managing {@link Consumer}-based {@link Listener Listeners} for {@link Event
  * Events}.
  */
-public class Event {
+public final class Event {
 
-  private Event() {}
+  private Event() {
+    throw new IllegalStateException("Cannot instantiate static utility classes!");
+  }
 
   /**
    * Register to consume an Event.

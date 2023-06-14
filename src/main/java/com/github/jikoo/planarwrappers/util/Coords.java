@@ -9,7 +9,9 @@ public final class Coords {
 
   private static final Pattern REGION_FILE = Pattern.compile("r\\.(-?\\d+)\\.(-?\\d+)\\.mca");
 
-  private Coords() {}
+  private Coords() {
+    throw new IllegalStateException("Cannot instantiate static utility classes!");
+  }
 
   /**
    * Converts region coordinates into chunk coordinates.

@@ -8,7 +8,9 @@ import org.jetbrains.annotations.Range;
 /** A utility for selecting a weighted choice randomly. */
 public final class WeightedRandom {
 
-  private WeightedRandom() {}
+  private WeightedRandom() {
+    throw new IllegalStateException("Cannot instantiate static utility classes!");
+  }
 
   /**
    * Choose an element from a collection of choices.

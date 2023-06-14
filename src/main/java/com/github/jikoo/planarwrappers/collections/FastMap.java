@@ -16,13 +16,15 @@ import java.util.function.Supplier;
  * to figure out which is present.
  */
 @SuppressWarnings("unchecked")
-class FastMap {
+final class FastMap {
 
   private static Class<Map<?, ?>> obj2Obj;
   private static Class<SortedMap<Integer, ?>> int2ObjTree;
   private static Class<Map<Integer, ?>> int2Obj;
 
-  private FastMap() {}
+  private FastMap() {
+    throw new IllegalStateException("Cannot instantiate static utility classes!");
+  }
 
   /**
    * Create an {@code Object2ObjectOpenHashMap} if the class can be found.

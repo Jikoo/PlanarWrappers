@@ -122,6 +122,8 @@ public final class Experience {
     player.setExp((float) (levelAndExp - level));
   }
 
-  private Experience() {}
+  private Experience() {
+    throw new IllegalStateException("Cannot instantiate static utility classes!");
+  }
 
 }

@@ -26,7 +26,9 @@ public final class StringConverters {
 
   private static final Pattern VALID_NAMESPACE = Pattern.compile("([a-z0-9._-]+:)?[a-z0-9/._-]+");
 
-  private StringConverters() {}
+  private StringConverters() {
+    throw new IllegalStateException("Cannot instantiate static utility classes!");
+  }
 
   /**
    * Convert a String into a NamespacedKey.

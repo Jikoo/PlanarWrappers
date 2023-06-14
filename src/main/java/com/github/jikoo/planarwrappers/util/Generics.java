@@ -13,7 +13,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class Generics {
 
-  private Generics() {}
+  private Generics() {
+    throw new IllegalStateException("Cannot instantiate static utility classes!");
+  }
 
   public static <T> @NotNull T orDefault(@Nullable T t, @NotNull T defaultT) {
     return t == null ? defaultT : t;
