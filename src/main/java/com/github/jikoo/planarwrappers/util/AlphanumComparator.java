@@ -1,12 +1,4 @@
 /*
- * The Alphanum Algorithm is an improved sorting algorithm for strings
- * containing numbers.  Instead of sorting numbers in ASCII order like
- * a standard sort, this algorithm sorts numbers in numeric order.
- *
- * The Alphanum Algorithm is discussed at http://www.DaveKoelle.com
- *
- * Released under the MIT License - https://opensource.org/licenses/MIT
- *
  * Copyright 2007-2017 David Koelle
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -32,11 +24,15 @@ package com.github.jikoo.planarwrappers.util;
 import java.util.Comparator;
 
 /**
- * This is an updated version with enhancements made by Daniel Migowski, Andre Bogus, and David
- * Koelle. Updated by David Koelle in 2017.
+ * The Alphanum Algorithm is an improved sorting algorithm for strings containing numbers.
+ * Instead of sorting numbers in ASCII order like a standard sort, this algorithm sorts
+ * numbers in numeric order.
  *
- * <p>To use this class: Use the static "sort" method from the java.util.Collections class:
- * Collections.sort(your list, new AlphanumComparator());
+ * <p>This is a version with enhancements made by Daniel Migowski, Andre Bogus, and David Koelle.
+ *
+ * <p>David Koelle's site is down; the most recent Wayback Machine capture
+ * of his Alphanum page can be found
+ * <a href=https://web.archive.org/web/20210803201519/http://www.davekoelle.com/alphanum.html>here</a>.
  */
 public class AlphanumComparator implements Comparator<String> {
 
@@ -58,13 +54,23 @@ public class AlphanumComparator implements Comparator<String> {
     this.stringComparator = null;
   }
 
+  /**
+   * Check if a character is a digit ({@code [0-9]}).
+   * @param ch the character
+   * @return true if the character is a digit
+   */
   private boolean isDigit(char ch) {
-    return ((ch >= 48) && (ch <= 57));
+    return '0' <= ch && ch <= '9';
   }
 
   /**
-   * Length of string is passed in for improved efficiency (only need to calculate it once)
-   **/
+   * Get the next substring that is comprised entirely by digit either or non-digit characters.
+   *
+   * @param s the string to substring
+   * @param slength the length of the string (passed in to prevent recalculation)
+   * @param marker the start of the substring
+   * @return a substring comprised entirely by digit either or non-digit characters
+   */
   private String getChunk(String s, int slength, int marker) {
     StringBuilder chunk = new StringBuilder();
     char c = s.charAt(marker);
@@ -81,6 +87,21 @@ public class AlphanumComparator implements Comparator<String> {
     return chunk.toString();
   }
 
+  /**
+   * Compare two strings containing numbers. Returns a negative integer, zero, or a positive
+   * integer as the first argument is less than, equal to, or greater than the second.
+   *
+   * <p>This comparator does not allow null values. Use {@link Comparator#nullsFirst(Comparator)} or
+   * {@link Comparator#nullsLast(Comparator)} to handle null values according to preference.</p>
+   *
+   * <p>Note: this comparator may impose orderings that are inconsistent with equals.</p>
+   *
+   * @param s1 the first object to be compared.
+   * @param s2 the second object to be compared.
+   * @return a negative integer, zero, or a positive integer as the first argument is less than,
+   *         equal to, or greater than the second.
+   * @throws NullPointerException if either argument is null.
+   */
   public int compare(String s1, String s2) {
     int thisMarker = 0;
     int thatMarker = 0;
