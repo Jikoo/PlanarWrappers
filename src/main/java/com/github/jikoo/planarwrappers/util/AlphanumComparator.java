@@ -36,14 +36,14 @@ import java.util.Comparator;
  */
 public class AlphanumComparator implements Comparator<String> {
 
-  private final Comparator<Object> stringComparator;
+  private final Comparator<String> stringComparator;
 
   /**
    * Construct a new AlphanumComparator instance with specific non-numeric ordering.
    *
    * @param stringComparator the {@link Comparator} used for ordering
    */
-  public AlphanumComparator(Comparator<Object> stringComparator) {
+  public AlphanumComparator(Comparator<String> stringComparator) {
     this.stringComparator = stringComparator;
   }
 
