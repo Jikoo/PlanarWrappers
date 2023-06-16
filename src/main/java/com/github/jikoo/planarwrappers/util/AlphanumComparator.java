@@ -131,7 +131,7 @@ public class AlphanumComparator implements Comparator<String> {
           }
         }
       } else if (stringComparator != null) {
-        result = stringComparator.compare(s1, s2);
+        result = stringComparator.compare(thisChunk, thatChunk);
       } else {
         result = thisChunk.compareTo(thatChunk);
       }
