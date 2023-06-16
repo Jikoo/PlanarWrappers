@@ -71,7 +71,7 @@ public class AlphanumComparator implements Comparator<String> {
    * @param marker the start of the substring
    * @return a substring comprised entirely by digit either or non-digit characters
    */
-  private String getChunk(String s, int slength, int marker) {
+  private StringBuilder getChunk(String s, int slength, int marker) {
     StringBuilder chunk = new StringBuilder();
     char c = s.charAt(marker);
     chunk.append(c);
@@ -84,7 +84,30 @@ public class AlphanumComparator implements Comparator<String> {
       }
       chunk.append(c);
     }
-    return chunk.toString();
+    return chunk;
+  }
+
+  /**
+   * Compare substrings consisting only of digits.
+   *
+   * @param thisChunk the first substring
+   * @param thatChunk the second substring
+   * @return the comparison result
+   */
+  private int compareDigitOnly(CharSequence thisChunk, CharSequence thatChunk) {
+    // Simple chunk comparison by length.
+    int thisChunkLength = thisChunk.length();
+    int result = thisChunkLength - thatChunk.length();
+    // If equal, the first different number counts
+    if (result == 0) {
+      for (int i = 0; i < thisChunkLength; i++) {
+        result = thisChunk.charAt(i) - thatChunk.charAt(i);
+        if (result != 0) {
+          return result;
+        }
+      }
+    }
+    return result;
   }
 
   /**
@@ -109,29 +132,18 @@ public class AlphanumComparator implements Comparator<String> {
     int s2Length = s2.length();
 
     while (thisMarker < s1Length && thatMarker < s2Length) {
-      String thisChunk = getChunk(s1, s1Length, thisMarker);
+      StringBuilder thisChunk = getChunk(s1, s1Length, thisMarker);
       thisMarker += thisChunk.length();
 
-      String thatChunk = getChunk(s2, s2Length, thatMarker);
+      StringBuilder thatChunk = getChunk(s2, s2Length, thatMarker);
       thatMarker += thatChunk.length();
 
       // If both chunks contain numeric characters, sort them numerically
       int result;
       if (isDigit(thisChunk.charAt(0)) && isDigit(thatChunk.charAt(0))) {
-        // Simple chunk comparison by length.
-        int thisChunkLength = thisChunk.length();
-        result = thisChunkLength - thatChunk.length();
-        // If equal, the first different number counts
-        if (result == 0) {
-          for (int i = 0; i < thisChunkLength; i++) {
-            result = thisChunk.charAt(i) - thatChunk.charAt(i);
-            if (result != 0) {
-              return result;
-            }
-          }
-        }
+        result = compareDigitOnly(thisChunk, thatChunk);
       } else if (stringComparator != null) {
-        result = stringComparator.compare(thisChunk, thatChunk);
+        result = stringComparator.compare(thisChunk.toString(), thatChunk.toString());
       } else {
         result = thisChunk.compareTo(thatChunk);
       }
