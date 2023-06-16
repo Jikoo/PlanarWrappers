@@ -36,24 +36,6 @@ import java.util.Comparator;
  */
 public class AlphanumComparator implements Comparator<String> {
 
-  private final Comparator<String> stringComparator;
-
-  /**
-   * Construct a new AlphanumComparator instance with specific non-numeric ordering.
-   *
-   * @param stringComparator the {@link Comparator} used for ordering
-   */
-  public AlphanumComparator(Comparator<String> stringComparator) {
-    this.stringComparator = stringComparator;
-  }
-
-  /**
-   * Construct a new AlphanumComparator instance using default non-numeric ordering.
-   */
-  public AlphanumComparator() {
-    this.stringComparator = null;
-  }
-
   /**
    * Check if a character is a digit ({@code [0-9]}).
    * @param ch the character
@@ -94,7 +76,7 @@ public class AlphanumComparator implements Comparator<String> {
    * @param thatChunk the second substring
    * @return the comparison result
    */
-  private int compareDigitOnly(CharSequence thisChunk, CharSequence thatChunk) {
+  protected int compareNumeric(StringBuilder thisChunk, StringBuilder thatChunk) {
     // Simple chunk comparison by length.
     int result = thisChunk.length() - thatChunk.length();
 
@@ -142,6 +124,17 @@ public class AlphanumComparator implements Comparator<String> {
   }
 
   /**
+   * Compare substrings which may consist of non-digit characters.
+   *
+   * @param thisChunk the first substring
+   * @param thatChunk the second substring
+   * @return the comparison result
+   */
+  protected int compareAlphabetic(StringBuilder thisChunk, StringBuilder thatChunk) {
+    return thisChunk.compareTo(thatChunk);
+  }
+
+  /**
    * Compare two strings containing numbers. Returns a negative integer, zero, or a positive
    * integer as the first argument is less than, equal to, or greater than the second.
    *
@@ -172,11 +165,9 @@ public class AlphanumComparator implements Comparator<String> {
       // If both chunks contain numeric characters, sort them numerically
       int result;
       if (isDigit(thisChunk.charAt(0)) && isDigit(thatChunk.charAt(0))) {
-        result = compareDigitOnly(thisChunk, thatChunk);
-      } else if (stringComparator != null) {
-        result = stringComparator.compare(thisChunk.toString(), thatChunk.toString());
+        result = compareNumeric(thisChunk, thatChunk);
       } else {
-        result = thisChunk.compareTo(thatChunk);
+        result = compareAlphabetic(thisChunk, thatChunk);
       }
 
       if (result != 0) {

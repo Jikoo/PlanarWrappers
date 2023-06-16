@@ -8,16 +8,18 @@ import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-import com.google.common.reflect.TypeToken;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @TestInstance(Lifecycle.PER_CLASS)
 class AlphanumComparatorTest {
@@ -47,8 +49,9 @@ class AlphanumComparatorTest {
     assertThat("Contents are ordered properly", values, is(sorted));
   }
 
-  @Test
-  void sortIgnoreCase() {
+  @ParameterizedTest
+  @MethodSource("getStringComparators")
+  void sortCollator(Comparator<String> comparator) {
     // Assemble sorted values.
     List<String> sorted = Arrays.asList(
         "01DELTA.A", "01delta.a", "01DELTA.B", "01delta.b","10delta.a", "10delta.b", "11delta.a"
@@ -64,39 +67,23 @@ class AlphanumComparatorTest {
         both(everyItem(is(in(sorted)))).and(containsInAnyOrder(sorted.toArray())));
     assertThat("Contents are ordered differently", values, not(sorted));
 
-    values.sort(new AlphanumComparator(String.CASE_INSENSITIVE_ORDER));
+    // This is more of a proof-of-concept than a good idea: converting to a string to sort is a
+    // pretty big performance hit, as is using a collator without caching keys.
+    AlphanumComparator alphaNum = new AlphanumComparator() {
+      @Override
+      protected int compareAlphabetic(StringBuilder thisChunk, StringBuilder thatChunk) {
+        return comparator.compare(thisChunk.toString(), thatChunk.toString());
+      }
+    };
+    values.sort(alphaNum);
 
     assertThat("Contents are ordered properly", values, is(sorted));
   }
 
-  @Test
-  void sortCollator() {
-    // Assemble sorted values.
-    List<String> sorted = Arrays.asList(
-        "01DELTA.A", "01delta.a", "01DELTA.B", "01delta.b","10delta.a", "10delta.b", "11delta.a"
-    );
-    List<String> values = new ArrayList<>(sorted);
-
-    // Mess up copy for sorting.
-    values.sort(Comparator.naturalOrder());
-
-    assertThat(
-        "Collections have identical contents",
-        values,
-        both(everyItem(is(in(sorted)))).and(containsInAnyOrder(sorted.toArray())));
-    assertThat("Contents are ordered differently", values, not(sorted));
-
-    // This is more of a proof-of-concept than a good idea: sorting using a Collator and not caching
-    // keys is painfully slow, over twice as slow as the normal case-insensitive sort above.
-    // You'd be far better off storing your own normalized-for-sorting version and sorting off that.
-    // However, for a quick(-to-type) and dirty hack, one can wrangle a Collator into working.
-    Collator collator = Collator.getInstance(Locale.ROOT);
+  private @NotNull Collection<Comparator<?>> getStringComparators() {
+    Collator collator = Collator.getInstance();
     collator.setStrength(Collator.PRIMARY);
-    @SuppressWarnings("unchecked")
-    Comparator<String> comparator = (Comparator<String>) TypeToken.of(Collator.class).getRawType().cast(collator);
-    values.sort(new AlphanumComparator(comparator));
-
-    assertThat("Contents are ordered properly", values, is(sorted));
+    return Arrays.asList(String.CASE_INSENSITIVE_ORDER, collator);
   }
 
 }
