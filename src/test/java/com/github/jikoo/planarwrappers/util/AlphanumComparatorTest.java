@@ -26,7 +26,7 @@ class AlphanumComparatorTest {
   void sort() {
     // Assemble sorted values.
     List<String> sorted = Arrays.asList(
-        "01DELTA.A", "01DELTA.B",
+        "1DELTA.A", "01DELTA.A", "001DELTA.A", "01DELTA.B",
         "01delta.a", "01delta.b", "10delta.a", "10delta.b", "11delta.a",
         "alpha.beta.1", "beta.theta",
         "gamma0", "gamma1", "gamma2", "gamma10", "gamma20"

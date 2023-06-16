@@ -96,18 +96,49 @@ public class AlphanumComparator implements Comparator<String> {
    */
   private int compareDigitOnly(CharSequence thisChunk, CharSequence thatChunk) {
     // Simple chunk comparison by length.
-    int thisChunkLength = thisChunk.length();
-    int result = thisChunkLength - thatChunk.length();
-    // If equal, the first different number counts
-    if (result == 0) {
-      for (int i = 0; i < thisChunkLength; i++) {
-        result = thisChunk.charAt(i) - thatChunk.charAt(i);
-        if (result != 0) {
-          return result;
-        }
+    int result = thisChunk.length() - thatChunk.length();
+
+    int thisIndex = 0;
+    int thatIndex = 0;
+    if (result != 0) {
+      // If lengths are unequal, zero-padded numbers will report themselves as larger with a simple
+      // length comparison. For example, "001" > "10" because 3 digits > 2 digits.
+      thisIndex = getUnpaddedStart(thisChunk);
+      thatIndex = getUnpaddedStart(thatChunk);
+
+      // result = (thisLen - thisIndex) - (thatLen - thatIndex)
+      result += thatIndex - thisIndex;
+
+      // Length comparison is valid now that preceding zeroes are ignored.
+      if (result != 0) {
+        return result;
+      }
+    }
+
+    // If numbers are of equal actual length, the first differing digit is used.
+    for (; thisIndex < thisChunk.length(); ++thisIndex, ++thatIndex) {
+      result = thisChunk.charAt(thisIndex) - thatChunk.charAt(thatIndex);
+      if (result != 0) {
+        return result;
       }
     }
     return result;
+  }
+
+  /**
+   * Locate the start index of a number, ignoring preceding zeroes.
+   *
+   * @param chunk the numeric string segment
+   * @return the index of the first non-zero character or the index of the final character
+   */
+  private int getUnpaddedStart(CharSequence chunk) {
+    for (int index = 0; index < chunk.length(); ++index) {
+      if (chunk.charAt(index) != '0') {
+        return index;
+      }
+    }
+    // If all characters are zeroes, the last index is the start.
+    return chunk.length() - 1;
   }
 
   /**
