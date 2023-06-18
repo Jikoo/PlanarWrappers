@@ -41,26 +41,24 @@ public class AlphanumComparator implements Comparator<String> {
    * @param ch the character
    * @return true if the character is a digit
    */
-  private boolean isDigit(char ch) {
+  protected final boolean isDigit(char ch) {
     return '0' <= ch && ch <= '9';
   }
 
   /**
    * Get the next substring that is comprised entirely by digit either or non-digit characters.
    *
-   * @param s the string to substring
-   * @param slength the length of the string (passed in to prevent recalculation)
-   * @param marker the start of the substring
+   * @param data the comparison data holder
    * @return a substring comprised entirely by digit either or non-digit characters
    */
-  private StringBuilder getChunk(String s, int slength, int marker) {
+  private StringBuilder getChunk(CompareData data) {
     StringBuilder chunk = new StringBuilder();
-    char c = s.charAt(marker);
+    char c = data.string.charAt(data.marker);
     chunk.append(c);
-    ++marker;
+    ++data.marker;
     boolean expectingDigit = isDigit(c);
-    for (; marker < slength; ++marker) {
-      c = s.charAt(marker);
+    for (; data.marker < data.length; ++data.marker) {
+      c = data.string.charAt(data.marker);
       if (expectingDigit != isDigit(c)) {
         break;
       }
@@ -135,6 +133,17 @@ public class AlphanumComparator implements Comparator<String> {
   }
 
   /**
+   * Compare trailing characters (if any) on otherwise-equal strings.
+   *
+   * @param data1 the first comparison data holder
+   * @param data2 the second comparison data holder
+   * @return the comparison result
+   */
+  protected int compareTail(CompareData data1, CompareData data2) {
+    return data1.length - data2.length;
+  }
+
+  /**
    * Compare two strings containing numbers. Returns a negative integer, zero, or a positive
    * integer as the first argument is less than, equal to, or greater than the second.
    *
@@ -150,17 +159,12 @@ public class AlphanumComparator implements Comparator<String> {
    * @throws NullPointerException if either argument is null.
    */
   public int compare(String s1, String s2) {
-    int thisMarker = 0;
-    int thatMarker = 0;
-    int s1Length = s1.length();
-    int s2Length = s2.length();
+    CompareData data1 = new CompareData(s1);
+    CompareData data2 = new CompareData(s2);
 
-    while (thisMarker < s1Length && thatMarker < s2Length) {
-      StringBuilder thisChunk = getChunk(s1, s1Length, thisMarker);
-      thisMarker += thisChunk.length();
-
-      StringBuilder thatChunk = getChunk(s2, s2Length, thatMarker);
-      thatMarker += thatChunk.length();
+    while (data1.marker < data1.length && data2.marker < data2.length) {
+      StringBuilder thisChunk = getChunk(data1);
+      StringBuilder thatChunk = getChunk(data2);
 
       // If both chunks contain numeric characters, sort them numerically
       int result;
@@ -175,6 +179,31 @@ public class AlphanumComparator implements Comparator<String> {
       }
     }
 
-    return s1Length - s2Length;
+    return compareTail(data1, data2);
   }
+
+  protected static final class CompareData {
+    private int marker = 0;
+    private final String string;
+    private final int length;
+
+    private CompareData(String string) {
+      this.string = string;
+      this.length = string.length();
+    }
+
+    public int getMarker() {
+      return marker;
+    }
+
+    public String getString() {
+      return string;
+    }
+
+    public int getLength() {
+      return length;
+    }
+
+  }
+
 }
