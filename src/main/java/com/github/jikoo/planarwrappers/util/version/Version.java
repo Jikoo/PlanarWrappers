@@ -75,7 +75,7 @@ public interface Version extends Comparable<Version> {
    */
   @Contract("_ -> new")
   static @NotNull Version of(@NotNull String data) {
-    if (Pattern.compile("^(\\d+\\.)+?\\d+$").matcher(data).matches()) {
+    if (Pattern.compile("^(\\d+\\.)*+\\d+$").matcher(data).matches()) {
       String[] raw = data.split("\\.");
       int[] parsed = new int[raw.length];
       for (int index = 0; index < raw.length; index++) {
