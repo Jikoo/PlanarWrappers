@@ -120,23 +120,31 @@ public final class StringConverters {
     return Material.matchMaterial(key);
   }
 
+  public static @NotNull Set<Material> toMaterialSet(@NotNull Collection<String> values) {
+    return toKeyedSet(
+        values,
+        StringConverters::toMaterial,
+        List.of(Tag.REGISTRY_BLOCKS, Tag.REGISTRY_ITEMS),
+        Material.class);
+  }
+
   /**
-   * Convert a {@link List} of {@link String Strings} into a {@link Set} of {@link Keyed} objects.
-   * Supports {@link Tag Tags} using Mojang's convention - tags are declared using a hash.
+   * Convert a {@link Collection} of {@link String Strings} into a {@link Set} of {@link Keyed}
+   * objects. Supports {@link Tag Tags} using Mojang's convention - tags are declared using a hash.
    *
    * <p>For example, rather than declaring every fence gate (i.e. {@code [
    * minecraft:dark_oak_fence_gate, minecraft:spruce_fence_gate, ...]}) one can simply use the tag:
-   * {@code [ #minecraft:fence_gate ]}.
+   * {@code [ #minecraft:fence_gates ]}.
    *
-   * @param values the List of Strings
-   * @param converter the Function used to convert to a Keyed object
-   * @param registries the registries that may contain a Tag
-   * @param clazz the Class expected from Tags
+   * @param values the values to convert
+   * @param converter the conversion function
+   * @param registries the names of registries that may contain the tag
+   * @param clazz the class of tag entries
    * @param <T> the type of Keyed
-   * @return the converted Set
+   * @return the converted values
    */
   public static <T extends Keyed> @NotNull Set<T> toKeyedSet(
-      @NotNull List<String> values,
+      @NotNull Collection<String> values,
       @NotNull Function<String, T> converter,
       @NotNull Collection<String> registries,
       @NotNull Class<T> clazz) {

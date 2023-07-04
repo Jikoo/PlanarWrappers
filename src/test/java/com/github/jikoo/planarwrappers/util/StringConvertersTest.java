@@ -9,10 +9,15 @@ import static org.mockito.Mockito.when;
 
 import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.mock.inventory.EnchantmentMocks;
+import java.util.List;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
+import org.bukkit.Tag;
 import org.bukkit.enchantments.Enchantment;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +31,26 @@ class StringConvertersTest {
   void beforeAll() {
     Server server = ServerMocks.newServer();
     when(server.getRegistry(notNull())).thenReturn(null);
+    when(server.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class))
+        .thenReturn(new Tag<>() {
+          private final Set<Material> materials = Set.of(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN);
+          @Override
+          public boolean isTagged(@NotNull Material item) {
+            return materials.contains(item);
+          }
+
+          @NotNull
+          @Override
+          public Set<Material> getValues() {
+            return materials;
+          }
+
+          @NotNull
+          @Override
+          public NamespacedKey getKey() {
+            return NamespacedKey.minecraft("wall_signs");
+          }
+        });
 
     EnchantmentMocks.setEnchantments();
     Bukkit.setServer(server);
@@ -73,6 +98,15 @@ class StringConvertersTest {
         "Value must be obtained from un-namespaced key.",
         fromUnNamespaced.getKey(),
         is(enchantment.getKey()));
+  }
+
+  @Test
+  void testToKeyedSet() {
+    assertThat(
+        "Values must be obtained from tags and keys",
+        StringConverters.toMaterialSet(
+            List.of("#wall_signs", "#$invalid", "#fake:tag", "gold_ore", "$invalid")),
+        is(Set.of(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN, Material.GOLD_ORE)));
   }
 
   @Test
