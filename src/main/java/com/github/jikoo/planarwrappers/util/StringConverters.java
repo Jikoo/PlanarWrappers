@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -24,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class StringConverters {
 
-  private static final Pattern VALID_NAMESPACE = Pattern.compile("([a-z0-9._-]+:)?[a-z0-9/._-]+");
-
   private StringConverters() {
     throw new IllegalStateException("Cannot instantiate static utility classes!");
   }
@@ -42,23 +39,7 @@ public final class StringConverters {
       return null;
     }
 
-    key = key.toLowerCase(Locale.ROOT);
-
-    if (!VALID_NAMESPACE.matcher(key).matches()) {
-      return null;
-    }
-
-    NamespacedKey namespacedKey;
-    if (key.indexOf(':') < 0) {
-      namespacedKey = NamespacedKey.minecraft(key);
-    } else {
-      String[] split = key.split(":");
-      // No alternative to deprecated API.
-      //noinspection deprecation
-      namespacedKey = new NamespacedKey(split[0], split[1]);
-    }
-
-    return namespacedKey;
+    return NamespacedKey.fromString(key.toLowerCase(Locale.ROOT));
   }
 
   /**
