@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.mock.inventory.EnchantmentMocks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,7 +24,7 @@ class StringConvertersTest {
 
   @BeforeAll
   void beforeAll() {
-    Server server = BukkitServer.newServer();
+    Server server = ServerMocks.newServer();
     when(server.getRegistry(notNull())).thenReturn(null);
 
     EnchantmentMocks.setEnchantments();

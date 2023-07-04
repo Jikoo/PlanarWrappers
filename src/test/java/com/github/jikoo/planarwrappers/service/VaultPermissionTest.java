@@ -9,7 +9,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.service.VaultPermission.FrozenServerOp;
 import java.util.logging.Logger;
 import net.milkbowl.vault.permission.Permission;
@@ -47,7 +47,7 @@ class VaultPermissionTest {
 
   @BeforeEach
   void beforeEach() {
-    server = BukkitServer.newServer();
+    server = ServerMocks.newServer();
     ServicesManager services = new SimpleServicesManager();
     doReturn(services).when(server).getServicesManager();
     PluginManager plugins = new SimplePluginManager(server, new SimpleCommandMap(server));
@@ -71,7 +71,7 @@ class VaultPermissionTest {
 
   @AfterEach
   void afterEach() {
-    BukkitServer.unsetBukkitServer();
+    ServerMocks.unsetBukkitServer();
   }
 
   @Test

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.mock.world.BlockDataMocks;
 import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
 import java.util.Arrays;
@@ -42,7 +42,7 @@ class ShapeTest {
 
   @BeforeAll
   void beforeAll() {
-    Server server = BukkitServer.newServer();
+    Server server = ServerMocks.newServer();
     when(server.createBlockData(any(Material.class))).thenAnswer(parameters -> BlockDataMocks.newData(parameters.getArgument(0)));
     Bukkit.setServer(server);
     world = WorldMocks.newWorld("world");

@@ -10,7 +10,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,7 +44,7 @@ class PluginProvidedServiceTest {
 
   @BeforeEach
   void beforeEach() {
-    server = BukkitServer.newServer();
+    server = ServerMocks.newServer();
 
     // Mock scheduler
     BukkitScheduler scheduler = mock(BukkitScheduler.class);

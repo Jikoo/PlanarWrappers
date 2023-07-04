@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.github.jikoo.planarwrappers.collections.BlockMap.BlockMapEntry;
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.mock.world.BlockMocks;
 import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
 import java.util.Arrays;
@@ -42,7 +42,7 @@ class BlockMapTest {
   void beforeAll() {
     String worldName = "world";
     world = WorldMocks.newWorld(worldName);
-    Server server = BukkitServer.newServer();
+    Server server = ServerMocks.newServer();
     when(server.getWorld(worldName)).thenReturn(world);
     Bukkit.setServer(server);
   }

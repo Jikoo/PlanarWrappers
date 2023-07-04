@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
 import com.github.jikoo.planarwrappers.tuple.Pair;
 import com.google.common.collect.HashMultimap;
@@ -42,7 +42,7 @@ class BlockMultimapTest {
 
   @BeforeAll
   void beforeAll() {
-    Server server = BukkitServer.newServer();
+    Server server = ServerMocks.newServer();
     Bukkit.setServer(server);
     when(server.getWorld("world")).thenAnswer(invocation -> this.world);
     this.world = WorldMocks.newWorld("world");
@@ -55,7 +55,7 @@ class BlockMultimapTest {
 
   @AfterAll
   void afterAll() {
-    BukkitServer.unsetBukkitServer();
+    ServerMocks.unsetBukkitServer();
   }
 
   @DisplayName("Map entry set should contain expected content.")

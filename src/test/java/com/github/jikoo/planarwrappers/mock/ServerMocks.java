@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.jetbrains.annotations.NotNull;
 
-public final class BukkitServer {
+public final class ServerMocks {
 
   public static @NotNull Server newServer() {
     Server mock = mock(Server.class);
@@ -34,6 +34,6 @@ public final class BukkitServer {
     }
   }
 
-  private BukkitServer() {}
+  private ServerMocks() {}
 
 }

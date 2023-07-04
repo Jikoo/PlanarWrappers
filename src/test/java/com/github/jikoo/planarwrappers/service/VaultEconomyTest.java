@@ -8,7 +8,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,7 +53,7 @@ class VaultEconomyTest {
 
   @BeforeEach
   void beforeEach() {
-    Server server = BukkitServer.newServer();
+    Server server = ServerMocks.newServer();
     ServicesManager services = new SimpleServicesManager();
     doReturn(services).when(server).getServicesManager();
     PluginManager manager = new SimplePluginManager(server, new SimpleCommandMap(server));
@@ -74,7 +74,7 @@ class VaultEconomyTest {
 
   @AfterEach
   void afterEach() {
-    BukkitServer.unsetBukkitServer();
+    ServerMocks.unsetBukkitServer();
   }
 
   @Test

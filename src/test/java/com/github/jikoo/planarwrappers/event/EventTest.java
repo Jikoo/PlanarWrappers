@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -56,7 +56,7 @@ class EventTest {
         ServerCommandEvent.getHandlerList().getRegisteredListeners().length,
         greaterThan(0));
 
-    Server server = BukkitServer.newServer();
+    Server server = ServerMocks.newServer();
     CommandSender sender = mock(CommandSender.class);
     ServerCommandEvent event = new ServerCommandEvent(sender, "example");
     PluginManager manager = new SimplePluginManager(server, new SimpleCommandMap(server));
@@ -80,7 +80,7 @@ class EventTest {
         ServerCommandEvent.getHandlerList().getRegisteredListeners().length,
         is(1));
 
-    Server server = BukkitServer.newServer();
+    Server server = ServerMocks.newServer();
     PluginManager manager = new SimplePluginManager(server, new SimpleCommandMap(server));
     manager.callEvent(new ServerLoadEvent(LoadType.RELOAD));
 

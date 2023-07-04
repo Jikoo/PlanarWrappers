@@ -20,7 +20,7 @@ import com.github.jikoo.planarwrappers.config.impl.MaterialSetting;
 import com.github.jikoo.planarwrappers.config.impl.StringSetting;
 import com.github.jikoo.planarwrappers.config.impl.VectorSetting;
 import com.github.jikoo.planarwrappers.function.TriFunction;
-import com.github.jikoo.planarwrappers.mock.BukkitServer;
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.util.StringConverters;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
@@ -64,7 +64,7 @@ class SettingTest {
 
   @BeforeAll
   void beforeAll() {
-    Server server = BukkitServer.newServer();
+    Server server = ServerMocks.newServer();
     when(server.getRegistry(notNull())).thenReturn(null);
     when(server.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class))
         .thenReturn(new Tag<>() {
