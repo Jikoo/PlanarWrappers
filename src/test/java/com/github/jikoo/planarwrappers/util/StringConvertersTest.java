@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 
 import com.github.jikoo.planarwrappers.mock.ServerMocks;
@@ -30,7 +29,6 @@ class StringConvertersTest {
   @BeforeAll
   void beforeAll() {
     Server server = ServerMocks.newServer();
-    when(server.getRegistry(notNull())).thenReturn(null);
     when(server.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class))
         .thenReturn(new Tag<>() {
           private final Set<Material> materials = Set.of(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN);
