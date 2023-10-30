@@ -29,7 +29,7 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
-          <version>3.1.2</version>
+          <version>3.2.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -60,7 +60,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
-        <version>3.1.2</version>
+        <version>3.2.1</version>
         <configuration>
           <!-- GitHub Actions offers 2 cores for Linux. -->
           <forkCount>2</forkCount>
