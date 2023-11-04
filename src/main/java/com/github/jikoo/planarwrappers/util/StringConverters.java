@@ -151,7 +151,7 @@ public final class StringConverters {
     Set<T> convertedSet = new HashSet<>();
 
     for (String value : values) {
-      if (value.length() > 0 && value.charAt(0) == '#') {
+      if (!value.isEmpty() && value.charAt(0) == '#') {
         // Mojang's tag declaration convention is to start with #, i.e. #minecraft:fence_gates
         addTag(convertedSet, value, registries, clazz);
       } else {

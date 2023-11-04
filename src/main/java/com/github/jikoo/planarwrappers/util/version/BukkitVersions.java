@@ -52,11 +52,10 @@ public final class BukkitVersions {
     Matcher matcher = semVerRelease.matcher(bukkitVersion);
 
     if (matcher.find()) {
-      String patch = matcher.group(3);
       return new IntVersion(
           Integer.parseInt(matcher.group(1)),
           Integer.parseInt(matcher.group(2)),
-          patch == null || patch.isEmpty() ? 0 : Integer.parseInt(matcher.group(4))
+          matcher.group(3) == null ? 0 : Integer.parseInt(matcher.group(4))
       );
     }
 
