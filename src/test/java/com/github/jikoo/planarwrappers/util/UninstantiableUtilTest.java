@@ -5,7 +5,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 
+import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +19,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,6 +32,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 class UninstantiableUtilTest {
 
   private static Collection<? extends Class<?>> utilClasses = null;
+
+  @BeforeAll
+  void setUp() {
+    Server server = ServerMocks.newServer();
+    doReturn("1.0.0-FAKE").when(server).getBukkitVersion();
+    Bukkit.setServer(server);
+  }
 
   @ParameterizedTest
   @MethodSource("getUtilClasses")
