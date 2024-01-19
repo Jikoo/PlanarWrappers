@@ -93,7 +93,7 @@ public final class StringConverters {
    */
   @Contract("null -> null")
   public static @Nullable Enchantment toEnchant(@Nullable String key) {
-    return toKeyed(Enchantment::getByKey, key);
+    return toKeyed(Registry.ENCHANTMENT::get, key);
   }
 
   /**

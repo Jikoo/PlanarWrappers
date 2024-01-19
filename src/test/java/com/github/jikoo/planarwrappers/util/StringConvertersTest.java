@@ -50,8 +50,8 @@ class StringConvertersTest {
           }
         });
 
-    EnchantmentMocks.setEnchantments();
     Bukkit.setServer(server);
+    EnchantmentMocks.init(server);
   }
 
   @Test
