@@ -1,5 +1,8 @@
 package com.github.jikoo.planarwrappers.util.version;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
@@ -34,12 +37,7 @@ public final class BukkitVersions {
 
   static {
     Server server = Bukkit.getServer();
-    // Note: we use Bukkit version and not server version because server version includes prefixes
-    // (such as implementation name and commit hashes of build version) that are not presented in
-    // valid SemVer format.
-    // Bukkit version should be a (mostly) SemVer-compliant version including Minecraft's version.
-    String bukkitVersion = server.getBukkitVersion();
-    MINECRAFT = parseMinecraftVersion(bukkitVersion);
+    MINECRAFT = parseMinecraftVersion(server);
 
     String packageString = server.getClass().getPackage().toString();
     CRAFTBUKKIT_PACKAGE = parseCraftbukkitVersion(packageString);
@@ -47,9 +45,26 @@ public final class BukkitVersions {
 
   @VisibleForTesting
   @Contract("_ -> new")
-  static @NotNull Version parseMinecraftVersion(@NotNull String bukkitVersion) {
+  static @NotNull Version parseMinecraftVersion(Server server) {
     Pattern semVerRelease = Pattern.compile("^(\\d+)\\.(\\d+)(\\.(\\d+))?-.*$");
-    Matcher matcher = semVerRelease.matcher(bukkitVersion);
+
+    String versionString;
+    try {
+      // Paper adds Server#getMinecraftVersion
+      MethodHandle getMcVer = MethodHandles.publicLookup()
+          .findVirtual(Server.class, "getMinecraftVersion", MethodType.methodType(String.class));
+      versionString = (String) getMcVer.invoke(server);
+
+    } catch (Throwable e) {
+      // Server is not implementing Paper's API.
+      // Note: we use Bukkit version and not server version because server version includes prefixes
+      // (such as implementation name and commit hashes of build version) that are not presented in
+      // valid SemVer format.
+      // Bukkit version should be a (mostly) SemVer-compliant version including Minecraft's version.
+      versionString = Bukkit.getBukkitVersion();
+    }
+
+    Matcher matcher = semVerRelease.matcher(versionString);
 
     if (matcher.find()) {
       return new IntVersion(
@@ -62,7 +77,7 @@ public final class BukkitVersions {
     // If Bukkit version has been modified (oh boy) fall through to using whatever Version selects
     // with extra SemVer details stripped. Spigot hasn't ever cut a Bukkit release, so
     // the pre-release data only will serve to cause comparison confusion.
-    return Version.of(stripExtraData(bukkitVersion));
+    return Version.of(stripExtraData(versionString));
   }
 
   @VisibleForTesting

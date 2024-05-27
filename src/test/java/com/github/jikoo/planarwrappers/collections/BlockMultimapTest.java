@@ -43,7 +43,6 @@ class BlockMultimapTest {
   @BeforeAll
   void beforeAll() {
     Server server = ServerMocks.newServer();
-    Bukkit.setServer(server);
     when(server.getWorld("world")).thenAnswer(invocation -> this.world);
     this.world = WorldMocks.newWorld("world");
   }

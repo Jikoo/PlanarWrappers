@@ -34,7 +34,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
@@ -84,7 +83,6 @@ class SettingTest {
             return NamespacedKey.minecraft("wall_signs");
           }
         });
-    Bukkit.setServer(server);
   }
 
   private static final String INVALID_OVERRIDE = "%invalid%";

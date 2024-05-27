@@ -4,19 +4,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 
 import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.mock.inventory.EnchantmentMocks;
 import java.util.List;
 import java.util.Set;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Tag;
 import org.bukkit.enchantments.Enchantment;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,28 +27,10 @@ class StringConvertersTest {
   @BeforeAll
   void beforeAll() {
     Server server = ServerMocks.newServer();
-    when(server.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class))
-        .thenReturn(new Tag<>() {
-          private final Set<Material> materials = Set.of(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN);
-          @Override
-          public boolean isTagged(@NotNull Material item) {
-            return materials.contains(item);
-          }
+    Tag<Material> wallSigns = Tag.WALL_SIGNS;
+    doReturn(Set.of(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN)).when(wallSigns).getValues();
+    doReturn(wallSigns).when(server).getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class);
 
-          @NotNull
-          @Override
-          public Set<Material> getValues() {
-            return materials;
-          }
-
-          @NotNull
-          @Override
-          public NamespacedKey getKey() {
-            return NamespacedKey.minecraft("wall_signs");
-          }
-        });
-
-    Bukkit.setServer(server);
     EnchantmentMocks.init(server);
   }
 

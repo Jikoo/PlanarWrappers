@@ -52,7 +52,6 @@ class VaultPermissionTest {
     doReturn(services).when(server).getServicesManager();
     PluginManager plugins = new SimplePluginManager(server, new SimpleCommandMap(server));
     doReturn(plugins).when(server).getPluginManager();
-    Bukkit.setServer(server);
 
     // Set up permissions.
     plugins.addPermission(

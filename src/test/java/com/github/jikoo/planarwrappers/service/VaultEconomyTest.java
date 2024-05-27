@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.SimpleCommandMap;
@@ -68,8 +67,6 @@ class VaultEconomyTest {
     player = mock(OfflinePlayer.class);
     doReturn(new UUID(0, 0)).when(player).getUniqueId();
     doReturn("Player").when(player).getName();
-
-    Bukkit.setServer(server);
   }
 
   @AfterEach

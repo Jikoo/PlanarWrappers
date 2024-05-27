@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,7 +36,6 @@ class UninstantiableUtilTest {
   void setUp() {
     Server server = ServerMocks.newServer();
     doReturn("1.0.0-FAKE").when(server).getBukkitVersion();
-    Bukkit.setServer(server);
   }
 
   @ParameterizedTest

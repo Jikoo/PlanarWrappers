@@ -28,6 +28,7 @@ import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -96,6 +97,11 @@ class PluginProvidedServiceTest {
     doReturn(logger).when(plugin).getLogger();
     doReturn("PluginServiceConsumer").when(plugin).getName();
     enabledPlugins.add(plugin);
+  }
+
+  @AfterEach
+  void afterEach() {
+    ServerMocks.unsetBukkitServer();
   }
 
   @DisplayName("Hook must report itself present if a registration was added prior to creation")

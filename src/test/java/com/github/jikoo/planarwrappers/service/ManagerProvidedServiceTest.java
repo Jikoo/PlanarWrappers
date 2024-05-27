@@ -40,7 +40,6 @@ class ManagerProvidedServiceTest {
     Server server = ServerMocks.newServer();
     when(server.getServicesManager()).thenReturn(manager);
     when(server.getPluginManager()).thenReturn(new SimplePluginManager(server, new SimpleCommandMap(server)));
-    Bukkit.setServer(server);
 
     plugin = mock(Plugin.class);
     when(plugin.getName()).thenReturn("ManagerServiceConsumer");

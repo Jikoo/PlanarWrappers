@@ -22,6 +22,7 @@ import org.bukkit.event.server.ServerLoadEvent.LoadType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.SimplePluginManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,11 @@ class EventTest {
   void beforeAll() {
     plugin = mock(Plugin.class);
     doReturn(true).when(plugin).isEnabled();
+  }
+
+  @AfterEach
+  void afterEach() {
+    ServerMocks.unsetBukkitServer();
   }
 
   @Test

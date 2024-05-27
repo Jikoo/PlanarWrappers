@@ -44,7 +44,6 @@ class BlockMapTest {
     world = WorldMocks.newWorld(worldName);
     Server server = ServerMocks.newServer();
     when(server.getWorld(worldName)).thenReturn(world);
-    Bukkit.setServer(server);
   }
 
   @BeforeEach

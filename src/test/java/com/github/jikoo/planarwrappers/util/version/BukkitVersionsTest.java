@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doReturn;
 import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import java.util.Collection;
 import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,11 +20,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 @TestInstance(Lifecycle.PER_CLASS)
 class BukkitVersionsTest {
 
+  Server server;
+
   @BeforeAll
   void beforeAll() {
-    Server server = ServerMocks.newServer();
+    server = ServerMocks.newServer();
     doReturn("1.19.4-R0.1-SNAPSHOT").when(server).getBukkitVersion();
-    Bukkit.setServer(server);
   }
 
   @Test
@@ -51,9 +51,11 @@ class BukkitVersionsTest {
   @ParameterizedTest
   @MethodSource("getMcVersions")
   void parseMcVersion(String version, Version expected) {
+    doReturn(version).when(server).getBukkitVersion();
     assertThat(
+
         "Version must be parsed from Bukkit version",
-        BukkitVersions.parseMinecraftVersion(version),
+        BukkitVersions.parseMinecraftVersion(server),
         is(expected));
   }
 
