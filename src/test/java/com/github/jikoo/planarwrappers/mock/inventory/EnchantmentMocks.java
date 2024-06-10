@@ -7,24 +7,18 @@ import static org.mockito.Mockito.doReturn;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
-import org.bukkit.Server;
 import org.bukkit.Tag;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.mockito.ArgumentMatchers;
 
 public class EnchantmentMocks {
-  private static final Map<NamespacedKey, Enchantment> KEYS_TO_ENCHANTS = new HashMap<>();
   private static final Tag<Material> TAG_EMPTY = new Tag<>() {
     @Override
     public boolean isTagged(@NotNull Material item) {
@@ -44,11 +38,7 @@ public class EnchantmentMocks {
     }
   };
 
-  public static void init(Server server) {
-    Registry<?> registry = Registry.ENCHANTMENT;
-    // Redirect enchantment registry back so that our modified version is always returned.
-    doReturn(registry).when(server).getRegistry(Enchantment.class);
-
+  public static void init() {
     List<Enchantment> protections = List.of(Enchantment.PROTECTION, Enchantment.FIRE_PROTECTION, Enchantment.BLAST_PROTECTION, Enchantment.PROJECTILE_PROTECTION);
     setUpEnchant(Enchantment.PROTECTION, 4, Tag.ITEMS_ENCHANTABLE_ARMOR, protections);
     setUpEnchant(Enchantment.FIRE_PROTECTION, 4, Tag.ITEMS_ENCHANTABLE_ARMOR, protections);
@@ -106,16 +96,18 @@ public class EnchantmentMocks {
     setUpEnchant(Enchantment.MENDING, 1, TAG_EMPTY, Tag.ITEMS_ENCHANTABLE_DURABILITY, List.of(Enchantment.INFINITY));
     setUpEnchant(Enchantment.VANISHING_CURSE, 1, TAG_EMPTY, Tag.ITEMS_ENCHANTABLE_VANISHING, List.of());
 
+    checkMissingEnchantments();
+  }
+
+  private static void checkMissingEnchantments() {
     Set<String> missingInternalEnchants = new HashSet<>();
     try {
       for (Field field : Enchantment.class.getFields()) {
         if (Modifier.isStatic(field.getModifiers()) && Enchantment.class.equals(field.getType())) {
           Enchantment declaredEnchant = (Enchantment) field.get(null);
-          Enchantment stored = KEYS_TO_ENCHANTS.get(declaredEnchant.getKey());
-          if (stored == null) {
+          // If max leveel is 0, enchantment was not set up.
+          if (declaredEnchant.getMaxLevel() == 0) {
             missingInternalEnchants.add(declaredEnchant.getKey().toString());
-          } else {
-            doReturn(field.getName()).when(stored).getName();
           }
         }
       }
@@ -126,17 +118,6 @@ public class EnchantmentMocks {
     if (!missingInternalEnchants.isEmpty()) {
       throw new IllegalStateException("Missing enchantment declarations for " + missingInternalEnchants);
     }
-
-    // When all enchantments are initialized using Bukkit keys, redirect registry to our map
-    // so that invalid keys result in the expected null response.
-    doAnswer(invocation -> KEYS_TO_ENCHANTS.get(invocation.getArgument(0, NamespacedKey.class)))
-        .when(registry).get(ArgumentMatchers.notNull());
-    doAnswer(invocation -> KEYS_TO_ENCHANTS.values().stream()).when(registry).stream();
-    doAnswer(invocation -> KEYS_TO_ENCHANTS.values().iterator()).when(registry).iterator();
-  }
-
-  public static void putEnchant(@NotNull Enchantment enchantment) {
-    KEYS_TO_ENCHANTS.put(enchantment.getKey(), enchantment);
   }
 
   private static void setUpEnchant(
@@ -160,7 +141,6 @@ public class EnchantmentMocks {
       @NotNull Tag<Material> tableTarget,
       @NotNull Tag<Material> anvilTarget,
       @NotNull Collection<Enchantment> conflicts) {
-    KEYS_TO_ENCHANTS.put(enchantment.getKey(), enchantment);
 
     doReturn(1).when(enchantment).getStartLevel();
     doReturn(maxLevel).when(enchantment).getMaxLevel();

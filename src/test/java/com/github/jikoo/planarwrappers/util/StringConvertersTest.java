@@ -31,7 +31,7 @@ class StringConvertersTest {
     doReturn(Set.of(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN)).when(wallSigns).getValues();
     doReturn(wallSigns).when(server).getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("wall_signs"), Material.class);
 
-    EnchantmentMocks.init(server);
+    EnchantmentMocks.init();
   }
 
   @Test
