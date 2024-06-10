@@ -85,8 +85,8 @@ class PluginProvidedServiceTest {
     }).when(plugins).disablePlugin(any(Plugin.class));
     doAnswer(invocation -> enabledPlugins.toArray(new Plugin[0])).when(plugins).getPlugins();
     doAnswer(invocation -> {
-      Plugin plugin = invocation.getArgument(0);
-      return plugin.isEnabled();
+      Plugin targetPlugin = invocation.getArgument(0);
+      return targetPlugin.isEnabled();
     }).when(plugins).isPluginEnabled(any(Plugin.class));
     doReturn(plugins).when(server).getPluginManager();
 

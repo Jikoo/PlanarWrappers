@@ -13,7 +13,6 @@ import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.service.VaultPermission.FrozenServerOp;
 import java.util.logging.Logger;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.SimpleCommandMap;

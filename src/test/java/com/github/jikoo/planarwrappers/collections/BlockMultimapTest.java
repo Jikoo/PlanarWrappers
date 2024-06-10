@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -74,12 +72,10 @@ class BlockMultimapTest {
     // Google's Multimap EntrySet (and other things) appear to fail in comparison.
     List<Pair<Block, ArrayList<Object>>> entries =
         blockMultimap.entrySet().stream()
-            .map(entry -> new Pair<>(entry.getKey(), new ArrayList<>(entry.getValue())))
-            .collect(Collectors.toList());
+            .map(entry -> new Pair<>(entry.getKey(), new ArrayList<>(entry.getValue()))).toList();
     List<Pair<Block, ArrayList<Object>>> values =
         normalMap.asMap().entrySet().stream()
-            .map(entry -> new Pair<>(entry.getKey(), new ArrayList<>(entry.getValue())))
-            .collect(Collectors.toList());
+            .map(entry -> new Pair<>(entry.getKey(), new ArrayList<>(entry.getValue()))).toList();
 
     assertThat(
         "Entries must match!",

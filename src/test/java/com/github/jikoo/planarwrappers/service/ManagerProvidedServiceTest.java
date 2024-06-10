@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.Plugin;

@@ -539,7 +539,7 @@ class VaultEconomyTest {
   @Test
   void isBankMemberNoProvider() {
     String bankName = "Server Bank";
-    assertThat("Response is sane default", econHook.isBankOwner(bankName, player), is(false));
+    assertThat("Response is sane default", econHook.isBankMember(bankName, player), is(false));
   }
 
   @Test
