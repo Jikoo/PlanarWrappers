@@ -1,6 +1,6 @@
 # PlanarWrappers
 
-![Build](https://github.com/Jikoo/PlanarWrappers/workflows/Build/badge.svg)
+[![Build](https://github.com/Jikoo/PlanarWrappers/actions/workflows/ci.yml/badge.svg)](https://github.com/Jikoo/PlanarWrappers/actions/workflows/ci.yml)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Jikoo_PlanarWrappers&metric=coverage)](https://sonarcloud.io/dashboard?id=Jikoo_PlanarWrappers)  
 Yet another Bukkit-related library.
 
