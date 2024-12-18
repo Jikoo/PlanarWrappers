@@ -19,6 +19,7 @@ import org.bukkit.Registry;
 import org.bukkit.Server;
 import org.bukkit.Tag;
 import org.jetbrains.annotations.NotNull;
+import org.mockito.stubbing.Answer;
 
 public final class ServerMocks {
 
@@ -40,7 +41,8 @@ public final class ServerMocks {
         registers.computeIfAbsent(invocationGetRegistry.getArgument(0), clazz -> {
           Registry<?> registry = mock();
           Map<NamespacedKey, Keyed> cache = new HashMap<>();
-          doAnswer(invocationGetEntry -> {
+
+          Answer<Keyed> getOrThrow = invocationGetEntry -> {
             NamespacedKey key = invocationGetEntry.getArgument(0);
             // Some classes (like BlockType and ItemType) have extra generics that will be
             // erased during runtime calls. To ensure accurate typing, grab the constant's field.
@@ -49,10 +51,8 @@ public final class ServerMocks {
             try {
               //noinspection unchecked
               constantClazz = (Class<? extends Keyed>) clazz.getField(key.getKey().toUpperCase(Locale.ROOT).replace('.', '_')).getType();
-            } catch (ClassCastException e) {
+            } catch (ClassCastException | NoSuchFieldException e) {
               throw new RuntimeException(e);
-            } catch (NoSuchFieldException e) {
-              return null;
             }
 
             return cache.computeIfAbsent(key, key1 -> {
@@ -60,7 +60,21 @@ public final class ServerMocks {
               doReturn(key).when(keyed).getKey();
               return keyed;
             });
+          };
+
+          doAnswer(getOrThrow).when(registry).getOrThrow(notNull());
+          // For get, return null for nonexistant constants.
+          doAnswer(invocation -> {
+            try {
+              return getOrThrow.answer(invocation);
+            } catch (RuntimeException e) {
+              if (e.getCause() instanceof NoSuchFieldException) {
+                return null;
+              }
+              throw e;
+            }
           }).when(registry).get(notNull());
+
           return registry;
         }))
         .when(mock).getRegistry(notNull());
