@@ -30,7 +30,7 @@ class BukkitVersionsTest {
 
   @Test
   void basicParse() {
-    assertThat(BukkitVersions.MINECRAFT, is(new IntVersion(1, 19, 4)));
+    assertThat(BukkitVersions.MINECRAFT, is(Version.of(1, 19, 4)));
     assertThat(BukkitVersions.CRAFTBUKKIT_PACKAGE, is(BukkitVersions.MINECRAFT));
   }
 
@@ -61,15 +61,15 @@ class BukkitVersionsTest {
 
   private static Collection<Arguments> getMcVersions() {
     return List.of(
-        Arguments.of("1.4.5-R1.0", new IntVersion(1, 4, 5)),
-        Arguments.of("1.19.4-R0.1-SNAPSHOT", new IntVersion(1, 19, 4)),
-        Arguments.of("1.20-R0.1-SNAPSHOT", new IntVersion(1, 20, 0)),
-        Arguments.of("unknown-format+1.10.3-R01 Cool Server Edition", new StringVersion("unknown")),
-        Arguments.of("1.10.3+coolserver-R0.1-SNAPSHOT", new IntVersion(1, 10, 3)),
-        Arguments.of("weirdserver+1.10.3-R0.1-SNAPSHOT", new StringVersion("weirdserver")),
-        Arguments.of("weirdserver-1.10.3-R0.1-SNAPSHOT", new StringVersion("weirdserver")),
-        Arguments.of("weirdserver+1.10.3", new StringVersion("weirdserver")),
-        Arguments.of("weirdserver1_10_R3", new StringVersion("weirdserver1_10_R3"))
+        Arguments.of("1.4.5-R1.0", Version.of(1, 4, 5)),
+        Arguments.of("1.19.4-R0.1-SNAPSHOT", Version.of(1, 19, 4)),
+        Arguments.of("1.20-R0.1-SNAPSHOT", Version.of(1, 20, 0)),
+        Arguments.of("unknown-format+1.10.3-R01 Cool Server Edition", Version.of("unknown")),
+        Arguments.of("1.10.3+coolserver-R0.1-SNAPSHOT", Version.of(1, 10, 3)),
+        Arguments.of("weirdserver+1.10.3-R0.1-SNAPSHOT", Version.of("weirdserver")),
+        Arguments.of("weirdserver-1.10.3-R0.1-SNAPSHOT", Version.of("weirdserver")),
+        Arguments.of("weirdserver+1.10.3", Version.of("weirdserver")),
+        Arguments.of("weirdserver1_10_R3", Version.of("weirdserver1_10_R3"))
     );
   }
 
@@ -84,10 +84,10 @@ class BukkitVersionsTest {
 
   private static Collection<Arguments> getCbVersions() {
     return List.of(
-        Arguments.of("org.bukkit.craftbukkit.v1_5_R1.other.package", new IntVersion(1, 5, 1)),
-        Arguments.of("org.bukkit.craftbukkit.v1_5_R1", new IntVersion(1, 5, 1)),
-        Arguments.of("org.bukkit.craftbukkit.v18_19_R50", new IntVersion(18, 19, 50)),
-        Arguments.of("org.bukkit.craftbukkit.v1_20_R2", new IntVersion(1, 20, 2))
+        Arguments.of("org.bukkit.craftbukkit.v1_5_R1.other.package", Version.of(1, 5, 1)),
+        Arguments.of("org.bukkit.craftbukkit.v1_5_R1", Version.of(1, 5, 1)),
+        Arguments.of("org.bukkit.craftbukkit.v18_19_R50", Version.of(18, 19, 50)),
+        Arguments.of("org.bukkit.craftbukkit.v1_20_R2", Version.of(1, 20, 2))
     );
   }
 

@@ -67,7 +67,7 @@ public final class BukkitVersions {
     Matcher matcher = semVerRelease.matcher(versionString);
 
     if (matcher.find()) {
-      return new IntVersion(
+      return Version.of(
           Integer.parseInt(matcher.group(1)),
           Integer.parseInt(matcher.group(2)),
           matcher.group(3) == null ? 0 : Integer.parseInt(matcher.group(4))
@@ -86,7 +86,7 @@ public final class BukkitVersions {
     Matcher matcher = packageVer.matcher(craftbukkitPackage);
 
     if (matcher.find()) {
-      return new IntVersion(
+      return Version.of(
           Integer.parseInt(matcher.group(1)),
           Integer.parseInt(matcher.group(2)),
           Integer.parseInt(matcher.group(3))
