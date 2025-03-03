@@ -40,37 +40,48 @@ relatively satisfied with.
   Were this a `Setting<Map>`, the key `a` would not be present in the override `world_b` and would
   fall through to `0`.
 
-### Functions
+### Graceful optional dependency handling
 
-I keep rewriting the same functional interfaces. It may take five seconds, but it's five seconds
-each and every time that I could have spent doing anything else.
+How many times have we all written a Vault hook? It's easy to do quickly, but can take a while to
+do properly. Not only do the `VaultEconomy` and `VaultPermission` provide these hooks, the
+`ManagerProvidedService` (or `PluginProvidedService` for specific plugins) makes it easy to properly
+handle classes not being loaded at runtime without the usual nightmare of breaking reflective
+access to the caller entirely. No more failure to register events because you imported a class
+that doesn't exist!
 
-### Other ~~Garbage~~ Useful Stuff
+### Lambda-based event registration
 
-* Tuples - basic `Pair` and `Triple`
+Speaking of failures to register events, what if you didn't need to rely on Bukkit to reflectively
+register your events and could instead use an event consumer? The `Event` utility provides this.
+
+### Task management
+
+If you have a repeating task with a period under a few seconds ticking multiple entries, it may
+be safer to divide the load across the ticks of the whole period to prevent spikes in tick time.
+`DistributedTask` provides automatic bucketing of entries.
+
+Alternately, for cases where multiple tasks might be scheduled in quick succession, the
+`AsyncBatch` and `SyncBatch` provide an easy way to wait for a short period before pushing
+a group of changes. This may help reduce I/O by reducing repeated writes to the same file or
+improve database connection reuse by clustering calls to be submitted in a batch.
+
+### Other Useful Stuff
+
+* Version comparisons
+* Functions - throwing functions, trifunction/triconsumer
+* Experience conversion and management
 * Convert coordinates between region, chunk, and block values
 * Weighted random selection
 * Etc.
 
-## For Developers
+## Dependency Information
 
-Please relocate PlanarWrappers when including its files in your project! Bundled library conflicts
-are not fun, make your life easier.
-
-### License [![WTFPL](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-2.png)](http://www.wtfpl.net/)
-
-This project is licensed under the WTFPL. You can do whatever you want with the content.
-If you do use it and decide to credit me, thanks! I think you're just swell.
-
-### Version Control
-
-PlanarWrappers is available via [JitPack](https://jitpack.io). I pretty much only use Maven in my
-projects, so that's the only full writeup you get, but JitPack supports Gradle, Maven, SBT, and
+PlanarWrappers is available via [JitPack](https://jitpack.io). JitPack supports Gradle, Maven, SBT, and
 Leiningen.
 
 ### Maven
 
-Replace `$planarVersion` with the version you desire to work with. The `minimizeJar` option is
+Replace `${versions.planar}` with the version you desire to work with. The `minimizeJar` option is
 recommended to prevent inflating your plugin with unnecessary classes.  
 
 Sample configuration:
@@ -88,7 +99,7 @@ Sample configuration:
     <dependency>
       <groupId>com.github.jikoo</groupId>
       <artifactId>planarwrappers</artifactId>
-      <version>$planarVersion</version>
+      <version>${versions.planar}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -98,7 +109,7 @@ Sample configuration:
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>${versions.shade}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -121,18 +132,3 @@ Sample configuration:
   </build>
 </project>
 ```
-
-### Other Version Control Software
-
-Use JitPack to get builds with whatever software you like. I'm way too lazy to include an example.
-
-### People Who Hate Version Control
-
-Everyone loves options. We may not see eye to eye, but you're free to do what you like.
-1) Just copy the files you want into your project. I can't make you, but I ask that you please
-   change the package name to prevent conflicts.
-2) Use a compiled copy as a manually maintained dependency. I'm way too lazy to even set up appveyor
-   for this project (that takes like four clicks, I'd rather spend my time having fun by writing
-   five paragraphs), so you can abuse JitPack and download builds directly like it was a regular CI,
-   you monster. Also, since you're not using version control you probably aren't relocating the
-   files, which is a whole new can of worms. Have fun!
