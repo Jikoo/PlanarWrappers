@@ -18,6 +18,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Server;
 import org.bukkit.Tag;
+import org.bukkit.registry.RegistryAware;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.stubbing.Answer;
 
@@ -58,6 +59,10 @@ public final class ServerMocks {
             return cache.computeIfAbsent(key, key1 -> {
               Keyed keyed = mock(constantClazz);
               doReturn(key).when(keyed).getKey();
+              if (keyed instanceof RegistryAware aware) {
+                doReturn(key).when(aware).getKeyOrNull();
+                doReturn(key).when(aware).getKeyOrThrow();
+              }
               return keyed;
             });
           };
