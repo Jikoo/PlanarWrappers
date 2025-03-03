@@ -1,4 +1,4 @@
-package com.github.jikoo.planarwrappers.tuple;
+package com.github.jikoo.planarwrappers.function;
 
 import java.time.Clock;
 import java.util.concurrent.TimeUnit;

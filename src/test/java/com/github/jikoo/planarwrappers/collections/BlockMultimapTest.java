@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 
 import com.github.jikoo.planarwrappers.mock.ServerMocks;
 import com.github.jikoo.planarwrappers.mock.world.WorldMocks;
-import com.github.jikoo.planarwrappers.tuple.Pair;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
@@ -70,18 +69,20 @@ class BlockMultimapTest {
     normalMap.forEach(blockMultimap::put);
 
     // Google's Multimap EntrySet (and other things) appear to fail in comparison.
-    List<Pair<Block, ArrayList<Object>>> entries =
+    List<BlockMapping> entries =
         blockMultimap.entrySet().stream()
-            .map(entry -> new Pair<>(entry.getKey(), new ArrayList<>(entry.getValue()))).toList();
-    List<Pair<Block, ArrayList<Object>>> values =
+            .map(entry -> new BlockMapping(entry.getKey(), new ArrayList<>(entry.getValue()))).toList();
+    List<BlockMapping> values =
         normalMap.asMap().entrySet().stream()
-            .map(entry -> new Pair<>(entry.getKey(), new ArrayList<>(entry.getValue()))).toList();
+            .map(entry -> new BlockMapping(entry.getKey(), new ArrayList<>(entry.getValue()))).toList();
 
     assertThat(
         "Entries must match!",
         entries,
         both(everyItem(in(values))).and(containsInAnyOrder(values.toArray())));
   }
+
+  private record BlockMapping(Block block, List<Object> object) {}
 
   @DisplayName("Map should support standard manipulation operations")
   @Test

@@ -1,6 +1,5 @@
 package com.github.jikoo.planarwrappers.util;
 
-import com.github.jikoo.planarwrappers.tuple.Pair;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,18 +76,27 @@ public final class Coords {
    * Gets the lowest chunk coordinates of a region.
    *
    * @param regionFileName the name of the region file in r.X.Z.mca format
-   * @return a Pair containing the X and Z coordinates of the lowest chunk in the region
+   * @return a Coord containing the X and Z coordinates of the lowest chunk in the region
    * @throws IllegalArgumentException if the region file name is not in the correct format
    */
-  public static Pair<Integer, Integer> getRegionChunkCoords(final String regionFileName) {
+  public static Coord getRegionChunkCoords(final String regionFileName) {
     Matcher matcher = REGION_FILE.matcher(regionFileName);
     if (!matcher.find()) {
       throw new IllegalArgumentException(
           regionFileName + " does not match the region file name format!");
     }
 
-    return new Pair<>(
+    return new Coord(
         regionToChunk(Integer.parseInt(matcher.group(1))),
         regionToChunk(Integer.parseInt(matcher.group(2))));
   }
+
+  /**
+   * A data holder wrapping a coordinate pair.
+   *
+   * @param x the X axis coordinate
+   * @param z the Z axis coordinate
+   */
+  public record Coord(int x, int z) {}
+
 }

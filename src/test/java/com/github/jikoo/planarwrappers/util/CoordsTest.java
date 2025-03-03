@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.github.jikoo.planarwrappers.tuple.Pair;
+import com.github.jikoo.planarwrappers.util.Coords.Coord;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.Stream;
@@ -114,9 +114,9 @@ class CoordsTest {
       return;
     }
 
-    Pair<Integer, Integer> regionChunkCoords = Coords.getRegionChunkCoords(regionFileName);
-    assertThat("X value must parse correctly", regionChunkCoords.getLeft(), is(expectedX));
-    assertThat("Z value must parse correctly", regionChunkCoords.getRight(), is(expectedZ));
+    Coord regionChunkCoords = Coords.getRegionChunkCoords(regionFileName);
+    assertThat("X value must parse correctly", regionChunkCoords.x(), is(expectedX));
+    assertThat("Z value must parse correctly", regionChunkCoords.z(), is(expectedZ));
   }
 
   @DisplayName("Invalid MCA file names should throw an exception")
