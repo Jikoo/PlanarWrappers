@@ -144,6 +144,8 @@ public class EnchantmentMocks {
 
     doReturn(1).when(enchantment).getStartLevel();
     doReturn(maxLevel).when(enchantment).getMaxLevel();
+    // No-op to suppress unused warning; This class is used in other projects where it is needed.
+    tableTarget.getKey();
     // Hopefully in the future the enchantment API gets expanded, making separate table+anvil targets available
     doAnswer(invocation -> {
       ItemStack item = invocation.getArgument(0);

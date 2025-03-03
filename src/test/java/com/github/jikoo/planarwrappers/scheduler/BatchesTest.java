@@ -184,7 +184,9 @@ class BatchesTest {
     AsyncBatchTest() {
       super((plugin, delay, delayUnit) -> new AsyncBatch<>(plugin, delay, delayUnit) {
         @Override
-        protected void post(@NotNull @UnmodifiableView Set<String> batch) {}
+        protected void post(@NotNull @UnmodifiableView Set<String> batch) {
+          // Ignore posted data.
+        }
       });
     }
 
@@ -196,7 +198,9 @@ class BatchesTest {
     SyncBatchTest() {
       super((plugin, delay, delayUnit) -> new SyncBatch<>(plugin, delay, delayUnit) {
         @Override
-        protected void post(@NotNull @UnmodifiableView Set<String> batch) {}
+        protected void post(@NotNull @UnmodifiableView Set<String> batch) {
+          // Ignore posted data.
+        }
       });
     }
 
