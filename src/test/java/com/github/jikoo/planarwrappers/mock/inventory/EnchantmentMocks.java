@@ -105,9 +105,9 @@ public class EnchantmentMocks {
       for (Field field : Enchantment.class.getFields()) {
         if (Modifier.isStatic(field.getModifiers()) && Enchantment.class.equals(field.getType())) {
           Enchantment declaredEnchant = (Enchantment) field.get(null);
-          // If max leveel is 0, enchantment was not set up.
+          // If max level is 0, enchantment was not set up.
           if (declaredEnchant.getMaxLevel() == 0) {
-            missingInternalEnchants.add(declaredEnchant.getKey().toString());
+            missingInternalEnchants.add(declaredEnchant.getKeyOrThrow().toString());
           }
         }
       }
@@ -149,12 +149,11 @@ public class EnchantmentMocks {
       ItemStack item = invocation.getArgument(0);
       return item != null && anvilTarget.isTagged(item.getType());
     }).when(enchantment).canEnchantItem(any());
-    doReturn(tableTarget.getValues().isEmpty()).when(enchantment).isTreasure();
     // Note: Usual implementation allows contains check, but as these are
     // mocks that cannot be relied on.
     doAnswer(invocation -> {
-      NamespacedKey otherKey = invocation.getArgument(0, Enchantment.class).getKey();
-      return otherKey.equals(enchantment.getKey()) || conflicts.stream().anyMatch(conflict -> conflict.getKey().equals(otherKey));
+      NamespacedKey otherKey = invocation.getArgument(0, Enchantment.class).getKeyOrThrow();
+      return otherKey.equals(enchantment.getKeyOrThrow()) || conflicts.stream().anyMatch(conflict -> conflict.getKeyOrThrow().equals(otherKey));
     }).when(enchantment).conflictsWith(any());
   }
 

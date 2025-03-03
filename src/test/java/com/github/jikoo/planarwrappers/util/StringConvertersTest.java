@@ -64,18 +64,18 @@ class StringConvertersTest {
   @Test
   void testKeyedPresent() {
     Enchantment enchantment = Enchantment.SILK_TOUCH;
-    Enchantment fromNamespaced = StringConverters.toEnchant(enchantment.getKey().toString());
+    Enchantment fromNamespaced = StringConverters.toEnchant(enchantment.getKeyOrThrow().toString());
     assertThat("Value must not be null", fromNamespaced, notNullValue());
     assertThat(
         "Value must be obtained from namespaced key.",
-        fromNamespaced.getKey(),
-        is(enchantment.getKey()));
-    Enchantment fromUnNamespaced = StringConverters.toEnchant(enchantment.getKey().getKey());
+        fromNamespaced.getKeyOrThrow(),
+        is(enchantment.getKeyOrThrow()));
+    Enchantment fromUnNamespaced = StringConverters.toEnchant(enchantment.getKeyOrThrow().getKey());
     assertThat("Value must not be null", fromUnNamespaced, notNullValue());
     assertThat(
         "Value must be obtained from un-namespaced key.",
-        fromUnNamespaced.getKey(),
-        is(enchantment.getKey()));
+        fromUnNamespaced.getKeyOrThrow(),
+        is(enchantment.getKeyOrThrow()));
   }
 
   @Test
@@ -98,11 +98,11 @@ class StringConvertersTest {
     Material material = Material.GOLD_ORE;
     assertThat(
         "Value must be obtained from namespaced key.",
-        StringConverters.toMaterial(material.getKey().toString()),
+        StringConverters.toMaterial(material.getKeyOrThrow().toString()),
         is(material));
     assertThat(
         "Value must be obtained from un-namespaced key.",
-        StringConverters.toMaterial(material.getKey().getKey()),
+        StringConverters.toMaterial(material.getKeyOrThrow().getKey()),
         is(material));
     assertThat(
         "Value must be obtained from raw name.",
