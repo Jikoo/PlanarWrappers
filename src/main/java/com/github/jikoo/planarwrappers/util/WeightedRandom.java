@@ -2,6 +2,7 @@ package com.github.jikoo.planarwrappers.util;
 
 import java.util.Collection;
 import java.util.Random;
+import java.util.function.ToIntFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -17,11 +18,12 @@ public final class WeightedRandom {
    *
    * @param random the Random to use
    * @param choices the choices
+   * @param toInt a conversion from a choice to an integer weight.
    * @param <T> the type of choice
    * @return the selected choice
    */
-  public static <T extends Choice> @NotNull T choose(Random random, Collection<T> choices) {
-    int choiceMax = sum(choices);
+  public static <T> @NotNull T choose(Random random, Collection<T> choices, ToIntFunction<T> toInt) {
+    int choiceMax = sum(choices, toInt);
 
     if (choiceMax <= 0) {
       throw new IllegalArgumentException("Must provide at least 1 choice with weight!");
@@ -30,7 +32,7 @@ public final class WeightedRandom {
     int chosen = random.nextInt(choiceMax);
 
     for (T choice : choices) {
-      chosen -= choice.getWeight();
+      chosen -= toInt.applyAsInt(choice);
       if (chosen <= 0) {
         return choice;
       }
@@ -40,8 +42,20 @@ public final class WeightedRandom {
         "Generated an index out of bounds with " + random.getClass().getName());
   }
 
-  private static int sum(@NotNull Collection<? extends Choice> choices) {
-    return choices.stream().mapToInt(Choice::getWeight).sum();
+  /**
+   * Choose an element from a collection of choices.
+   *
+   * @param random the Random to use
+   * @param choices the choices
+   * @param <T> the type of choice
+   * @return the selected choice
+   */
+  public static <T extends Choice> @NotNull T choose(Random random, Collection<T> choices) {
+    return choose(random, choices, Choice::getWeight);
+  }
+
+  private static <T> int sum(@NotNull Collection<T> choices, ToIntFunction<T> toInt) {
+    return choices.stream().mapToInt(toInt).sum();
   }
 
   /** A weighted random choice. Chance of selection is based on total choices and weights. */
