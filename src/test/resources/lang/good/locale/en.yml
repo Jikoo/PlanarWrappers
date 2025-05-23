@@ -1,0 +1,6 @@
+sample:
+  override: Overridden
+  inherited:
+    parent: From parent
+    parentDefault: From parent default
+  newKey: New Value

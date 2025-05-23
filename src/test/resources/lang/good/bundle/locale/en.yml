@@ -1,0 +1,6 @@
+sample:
+  override: "Title Text"
+  newKey: "New Value"
+  inherited:
+    parentDefault: "From parent default"
+    parent: "From parent default"
