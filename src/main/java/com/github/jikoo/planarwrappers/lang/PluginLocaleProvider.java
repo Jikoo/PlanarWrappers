@@ -15,7 +15,7 @@ public abstract class PluginLocaleProvider implements LocaleProvider {
   private final @NotNull Plugin plugin;
   private final @NotNull File folder;
 
-  public PluginLocaleProvider(@NotNull Plugin plugin) {
+  protected PluginLocaleProvider(@NotNull Plugin plugin) {
     this.plugin = plugin;
     this.folder = new File(plugin.getDataFolder(), "locale");
 

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class LanguageManager {
 
+  private static final String GUESS_PATH = "guess";
   private final @NotNull LocaleProvider provider;
   private final @NotNull Map<String, YamlConfiguration> locales;
 
@@ -152,8 +153,8 @@ public class LanguageManager {
   }
 
   private @NotNull String getLocale(@NotNull CommandSender sender) {
-    if (sender instanceof Player) {
-      return ((Player) sender).getLocale();
+    if (sender instanceof Player player) {
+      return player.getLocale();
     } else {
       return provider.getDefaultLocale();
     }
@@ -191,7 +192,7 @@ public class LanguageManager {
 
     if (!locale.equals(provider.getDefaultLocale())
         && provider.isWarnIfGuessExists()
-        && localeConfig.isConfigurationSection("guess")) {
+        && localeConfig.isConfigurationSection(GUESS_PATH)) {
       // Warn that guess section exists. This should run once per language per server restart
       // when accessed by a user to hint to server owners that they can make UX improvements.
       provider.getLogger().info(() -> "[LanguageManager] Missing translations from " + localeLoc.locale
@@ -337,7 +338,7 @@ public class LanguageManager {
     populateMissing(locale, localeConfig, localeDefaults, added, missing);
 
     if (parent != null) {
-      ConfigurationSection parentGuess = parent.getConfigurationSection("guess");
+      ConfigurationSection parentGuess = parent.getConfigurationSection(GUESS_PATH);
       // Remove any missing inherited keys.
       // Note that since the parent will have defaults set for convenience,
       // it is more accurate to check if the parent has a guess section for the key
@@ -399,14 +400,14 @@ public class LanguageManager {
     boolean updated = false;
 
     if (missing.isEmpty()) {
-      if (localeConfig.isConfigurationSection("guess")) {
-        localeConfig.set("guess", null);
+      if (localeConfig.isConfigurationSection(GUESS_PATH)) {
+        localeConfig.set(GUESS_PATH, null);
         updated = true;
       }
     } else {
-      ConfigurationSection guess = localeConfig.getConfigurationSection("guess");
+      ConfigurationSection guess = localeConfig.getConfigurationSection(GUESS_PATH);
       if (guess == null) {
-        guess = localeConfig.createSection("guess");
+        guess = localeConfig.createSection(GUESS_PATH);
       }
       for (Message message : missing) {
         if (!guess.isSet(message.key())) {

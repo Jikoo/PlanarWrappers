@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,12 +39,12 @@ class PluginLocaleProviderTest {
     private AutoCloseable closeable;
 
     @BeforeEach
-    public void open() {
+    void open() {
       closeable = MockitoAnnotations.openMocks(this);
     }
 
-    @BeforeEach
-    public void release() throws Exception {
+    @AfterEach
+    void release() throws Exception {
       closeable.close();
     }
 
