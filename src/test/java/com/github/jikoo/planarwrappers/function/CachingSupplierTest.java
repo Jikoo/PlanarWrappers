@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.github.jikoo.planarwrappers.function.CachingSupplier;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;
