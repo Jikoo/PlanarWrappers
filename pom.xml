@@ -113,7 +113,7 @@
       <artifactId>junit-jupiter</artifactId>
       <groupId>org.junit.jupiter</groupId>
       <scope>test</scope>
-      <version>5.13.0</version>
+      <version>5.13.1</version>
     </dependency>
     <dependency>
       <artifactId>hamcrest</artifactId>
